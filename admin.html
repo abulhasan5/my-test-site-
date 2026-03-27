@@ -2,52 +2,76 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>StepUpBD | এডমিন প্যানেল</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBD Admin | Direct Photo Upload</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfaf7; margin: 0; padding: 20px; }
+        .admin-card { background: white; max-width: 500px; margin: auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid #ff5e00; }
+        h2 { color: #333; text-align: center; }
+        label { font-weight: bold; color: #555; display: block; margin-top: 15px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .upload-btn { background: #ff5e00; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        #status { text-align: center; color: #ff5e00; font-weight: bold; margin-top: 15px; }
+    </style>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
             authDomain: "stepupbd-211d1.firebaseapp.com",
             projectId: "stepupbd-211d1",
+            storageBucket: "stepupbd-211d1.appspot.com",
             databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
         };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const storage = firebase.storage();
 
-        function loadOrders() {
-            database.ref('orders').on('value', (snapshot) => {
-                const container = document.getElementById('orderContainer');
-                container.innerHTML = "";
-                const data = snapshot.val();
-                if(data) {
-                    Object.keys(data).reverse().forEach(id => {
-                        const order = data[id];
-                        container.innerHTML += `
-                        <div style="background:white; padding:15px; margin-bottom:15px; border-radius:10px; border-left:5px solid #003399; box-shadow:0 2px 5px rgba(0,0,0,0.05)">
-                            <p><b>নাম:</b> ${order.customerName}</p>
-                            <p><b>ফোন:</b> ${order.customerPhone}</p>
-                            <p><b>ঠিকানা:</b> ${order.customerAddress}</p>
-                            <p><b>পণ্য:</b> ${order.product}</p>
-                            <p><small>${order.time}</small></p>
-                            <button onclick="deleteOrder('${id}')" style="color:red; cursor:pointer; background:none; border:1px solid red; padding:5px; border-radius:5px;">ডিলিট করুন</button>
-                        </div>`;
-                    });
-                } else {
-                    container.innerHTML = "<p>কোনো অর্ডার নেই।</p>";
-                }
-            });
-        }
+        async function uploadProduct() {
+            const file = document.getElementById('imageFile').files[0];
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const status = document.getElementById('status');
 
-        function deleteOrder(id) {
-            if(confirm("অর্ডারটি কি মুছে ফেলতে চান?")) {
-                database.ref('orders/' + id).remove();
+            if (!file || !name || !price) {
+                alert("ছবি, নাম এবং দাম দিন!");
+                return;
+            }
+
+            status.innerText = "ছবি আপলোড হচ্ছে... দয়া করে অপেক্ষা করুন।";
+
+            try {
+                const storageRef = storage.ref('products/' + Date.now() + "_" + file.name);
+                const snapshot = await storageRef.put(file);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+
+                await database.ref('products').push({
+                    name: name, price: price, img: downloadURL
+                });
+
+                status.innerText = "সফলভাবে আপলোড হয়েছে!";
+                alert("আপনার সাইটে পণ্যটি এখন দেখা যাবে।");
+                document.getElementById('pForm').reset();
+            } catch (error) {
+                status.innerText = "আপলোড ব্যর্থ হয়েছে। Firebase Storage Rules চেক করুন।";
             }
         }
     </script>
 </head>
-<body onload="loadOrders()" style="font-family:sans-serif; background:#f0f2f5; padding:20px;">
-    <h1 style="color:#003399; text-align:center;">StepUpBD অর্ডার লিস্ট</h1>
-    <div id="orderContainer" style="max-width:600px; margin:auto;"></div>
+<body>
+<div class="admin-card">
+    <h2>SmartBD পণ্য আপলোড</h2>
+    <form id="pForm">
+        <label>পণ্যের ছবি (গ্যালারি থেকে):</label>
+        <input type="file" id="imageFile" accept="image/*">
+        <input type="text" id="pName" placeholder="পণ্যের নাম">
+        <input type="text" id="pPrice" placeholder="দাম (যেমন: ৫৫০)">
+        <button type="button" class="upload-btn" onclick="uploadProduct()">সরাসরি সাইটে আপলোড দিন</button>
+        <div id="status"></div>
+    </form>
+</div>
 </body>
 </html>
