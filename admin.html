@@ -2,11 +2,9 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StepUpBD | Admin</title>
+    <title>StepUpBD | এডমিন প্যানেল</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
@@ -14,49 +12,42 @@
             projectId: "stepupbd-211d1",
             databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
         };
-
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
         function loadOrders() {
-            const list = document.getElementById('orderList');
             database.ref('orders').on('value', (snapshot) => {
-                list.innerHTML = "";
+                const container = document.getElementById('orderContainer');
+                container.innerHTML = "";
                 const data = snapshot.val();
                 if(data) {
                     Object.keys(data).reverse().forEach(id => {
                         const order = data[id];
-                        list.innerHTML += `
-                            <div style="background:white; margin:10px 0; padding:15px; border-radius:8px; border-left:5px solid #003399; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                                <b>নাম:</b> ${order.name}<br>
-                                <b>ফোন:</b> ${order.phone}<br>
-                                <b>ঠিকানা:</b> ${order.address}<br>
-                                <b>সময়:</b> ${order.time}<br>
-                                <button onclick="deleteOrder('${id}')" style="background:red; color:white; border:none; padding:5px 10px; margin-top:10px; border-radius:4px; cursor:pointer;">মুছে ফেলুন</button>
-                            </div>`;
+                        container.innerHTML += `
+                        <div style="background:white; padding:15px; margin-bottom:15px; border-radius:10px; border-left:5px solid #003399; box-shadow:0 2px 5px rgba(0,0,0,0.05)">
+                            <p><b>নাম:</b> ${order.customerName}</p>
+                            <p><b>ফোন:</b> ${order.customerPhone}</p>
+                            <p><b>ঠিকানা:</b> ${order.customerAddress}</p>
+                            <p><b>পণ্য:</b> ${order.product}</p>
+                            <p><small>${order.time}</small></p>
+                            <button onclick="deleteOrder('${id}')" style="color:red; cursor:pointer; background:none; border:1px solid red; padding:5px; border-radius:5px;">ডিলিট করুন</button>
+                        </div>`;
                     });
                 } else {
-                    list.innerHTML = "<p style='text-align:center;'>এখনও কোনো অর্ডার আসেনি।</p>";
+                    container.innerHTML = "<p>কোনো অর্ডার নেই।</p>";
                 }
             });
         }
 
         function deleteOrder(id) {
-            if(confirm("অর্ডারটি কি ডিলিট করবেন?")) {
+            if(confirm("অর্ডারটি কি মুছে ফেলতে চান?")) {
                 database.ref('orders/' + id).remove();
             }
         }
     </script>
-    <style>
-        body { font-family: sans-serif; background: #eef2f7; padding: 20px; }
-        .header { background: #003399; color: white; padding: 15px; text-align: center; border-radius: 10px; margin-bottom: 20px; }
-    </style>
 </head>
-<body onload="loadOrders()">
-    <div class="header">
-        <h1>StepUpBD অর্ডার লিস্ট</h1>
-    </div>
-    <div id="orderList" style="max-width: 600px; margin: auto;">
-        </div>
+<body onload="loadOrders()" style="font-family:sans-serif; background:#f0f2f5; padding:20px;">
+    <h1 style="color:#003399; text-align:center;">StepUpBD অর্ডার লিস্ট</h1>
+    <div id="orderContainer" style="max-width:600px; margin:auto;"></div>
 </body>
 </html>
