@@ -3,84 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart BD | Admin Panel</title>
+    <title>Smart BD | Admin Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        // আপনার ইউজারনেম এবং পাসওয়ার্ড এখানে দেওয়া হলো
+        const adminUser = "admin";
+        const adminPass = "1234"; 
+
+        function checkLogin() {
+            const user = prompt("এডমিন ইউজারনেম দিন:");
+            const pass = prompt("গোপন পাসওয়ার্ড দিন:");
+
+            if (user === adminUser && pass === adminPass) {
+                // সঠিক হলে পুরো পেজ দেখাবে
+                document.getElementById('adminContent').style.display = "block";
+                alert("স্বাগতম! আপনি সফলভাবে প্রবেশ করেছেন।");
+            } else {
+                // ভুল হলে মেইন পেজে পাঠিয়ে দেবে
+                alert("ভুল তথ্য! আপনি এই পেজে ঢোকার অনুমতি নেই।");
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f0f4f8; }
-        
-        /* সাইডবার বা হেডার */
+        #adminContent { display: none; } /* শুরুতে সব লক থাকবে */
         .admin-header { background: #003399; color: white; padding: 15px; text-align: center; }
-        
         .container { padding: 20px; max-width: 1000px; margin: auto; }
-
-        /* ড্যাশবোর্ড কার্ড */
         .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .stat-box { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid #003399; }
-        .stat-box h2 { color: #003399; margin: 5px 0; }
-
-        /* ফর্ম সেকশন */
         .admin-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .admin-card h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; color: #333; }
-
         input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
-        .submit-btn { background: #003399; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .submit-btn:hover { background: #002266; }
-
-        /* টেবিল স্টাইল */
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { padding: 12px; border: 1px solid #eee; text-align: left; font-size: 14px; }
-        th { background: #f8f9fa; }
+        .submit-btn { background: #003399; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
-<body>
+<body onload="checkLogin()">
 
-    <div class="admin-header">
-        <h1><i class="fa fa-user-shield"></i> Smart BD Admin</h1>
-    </div>
-
-    <div class="container">
-        <div class="stats">
-            <div class="stat-box">
-                <p>মোট অর্ডার</p>
-                <h2>২৫টি</h2>
-            </div>
-            <div class="stat-box">
-                <p>মোট কাস্টমার</p>
-                <h2>১২০ জন</h2>
-            </div>
+    <div id="adminContent">
+        <div class="admin-header">
+            <h1><i class="fa fa-user-shield"></i> Smart BD Admin</h1>
         </div>
 
-        <div class="admin-card">
-            <h3><i class="fa fa-plus-circle"></i> নতুন প্রোডাক্ট যোগ করুন</h3>
-            <input type="text" placeholder="প্রোডাক্টের নাম">
-            <input type="number" placeholder="প্রোডাক্টের দাম (টাকা)">
-            <select>
-                <option>ক্যাটাগরি সিলেক্ট করুন</option>
-                <option>মোবাইল</option>
-                <option>গ্যাজেট</option>
-                <option>ফ্যাশন</option>
-            </select>
-            <textarea placeholder="প্রোডাক্টের বিস্তারিত বর্ণনা..."></textarea>
-            <button class="submit-btn">পাবলিশ করুন</button>
-        </div>
+        <div class="container">
+            <div class="stats">
+                <div class="stat-box"><p>মোট অর্ডার</p><h2>০টি</h2></div>
+                <div class="stat-box"><p>মোট কাস্টমার</p><h2>০ জন</h2></div>
+            </div>
 
-        <div class="admin-card">
-            <h3><i class="fa fa-shopping-bag"></i> সাম্প্রতিক অর্ডারসমূহ</h3>
-            <table>
-                <tr>
-                    <th>অর্ডার ID</th>
-                    <th>নাম</th>
-                    <th>দাম</th>
-                    <th>অবস্থা</th>
-                </tr>
-                <tr>
-                    <td>#১০১</td>
-                    <td>আবুল হাসান</td>
-                    <td>৳ ১,৯৯৯</td>
-                    <td style="color: green;">ডেলিভারি হয়েছে</td>
-                </tr>
-            </table>
+            <div class="admin-card">
+                <h3><i class="fa fa-plus-circle"></i> নতুন প্রোডাক্ট যোগ করুন</h3>
+                <input type="text" placeholder="প্রোডাক্টের নাম">
+                <input type="number" placeholder="প্রোডাক্টের দাম (টাকা)">
+                <button class="submit-btn">পাবলিশ করুন</button>
+            </div>
         </div>
     </div>
 
