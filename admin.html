@@ -76,25 +76,46 @@
     <h3>পণ্য ম্যানেজ করুন</h3>
     <div id="productList">পণ্য লোড হচ্ছে...</div>
 </div>
-
 <div id="sliderSec" class="section">
-    <h3>স্লাইডার সেটআপ</h3>
-    <img id="mainBanner" src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg" alt="Welcome Offer">
-<div id="sliderSec" class="section">  <h3>স্লাইডার সেটআপ</h3>            <img id="mainBanner" src="...">      <br>
-    <input type="text" id="bannerUrl" placeholder="ব্যানারের লিঙ্ক দিন" style="width: 80%; padding: 10px; margin: 10px 0;">
-    <br>
-    <button class="btn" onclick="updateBanner()">ব্যানার আপডেট করুন</button>
-</div> ```
+    <h3 style="margin-top:0;">স্লাইডার সেটআপ</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
+        <p style="color: #666; font-size: 13px;">আপনার হোম পেজের ব্যানার বদলাতে নিচের বক্সে ছবির ডাইরেক্ট লিঙ্ক দিন।</p>
+        
+        <img id="mainBanner" src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg" alt="Preview" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee;">
+        
+        <input type="text" id="bannerUrl" placeholder="ImgBB বা অন্য সাইটের ছবির লিঙ্ক এখানে দিন" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px;">
+        
+        <button class="btn" onclick="updateBanner()" style="width: 100%; margin-top: 10px; background: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            ব্যানার আপডেট করুন
+        </button>
+    </div>
+</div>
+    
+        
+    
+    
+    
+        
+    
 
-**কেন ৮৩ লাইনে এটা গুরুত্বপূর্ণ:**
-* আপনার জাভাস্ক্রিপ্ট কোডটি (লাইন ৯৯) `bannerUrl` আইডি থেকে লিঙ্কটি খোঁজে। 
-* এই ইনপুট বক্সটি না থাকলে আপনি লিঙ্ক পেস্ট করার জায়গা পাবেন না এবং ফাংশনটি কাজ করবে না।
 
-**একটি ছোট রিমাইন্ডার:** আপনার ১০৬ নম্বর লাইনের শেষে `valu` এর বদলে `value = "";` লিখে দিতে ভুলবেন না, যাতে বাটন চাপলে বক্সটি খালি হয়ে যায়।
+    
+    
 
-এটা বসানো হয়ে গেলে কি একবার সেভ করে চেক করবেন? কোনো এরর (Error) আসলে আমাকে স্ক্রিনশট দিয়েন।
+    
+    
+    
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+
+
+
+
+
+
+
+
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
