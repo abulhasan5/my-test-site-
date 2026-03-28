@@ -176,6 +176,14 @@
             document.getElementById('upMsg').innerText = "";
         });
     }
+function updateBanner() {
+    const url = document.getElementById('bannerUrl').value;
+    if(!url) return alert("দয়া করে ব্যানারের লিঙ্ক দিন!");
+    db.ref("settings/banner").set(url).then(() => {
+        alert("ব্যানার সফলভাবে আপডেট হয়েছে!");
+        document.getElementById('bannerUrl').value = "";
+    }).catch(e => alert("Error: " + e.message));
+}
 
     function del(path) {
         if(confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?")) {
