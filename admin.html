@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUY BD Admin | Manage Store</title>
+    <title>SMART BD Admin | Manage Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* কালার ভেরিয়েবল পরিবর্তন - গাড় নীল রঙ */
         :root { --primary: #0d47a1; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light-bg); margin: 0; padding-bottom: 30px; }
         .header { background: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
@@ -30,7 +29,7 @@
 
 <div class="header">
     <i class="fa fa-bars" onclick="toggleMenu()" style="font-size: 22px; color: var(--primary); margin-right: 15px; cursor: pointer;"></i>
-    <div><b style="color: var(--primary);">BUY BD Admin</b><br><small>Manage store effectively</small></div>
+    <div><b style="color: var(--primary);">SMART BD Admin</b><br><small>Manage store effectively</small></div>
 </div>
 
 <div id="sideMenu">
@@ -76,46 +75,18 @@
     <h3>পণ্য ম্যানেজ করুন</h3>
     <div id="productList">পণ্য লোড হচ্ছে...</div>
 </div>
+
 <div id="sliderSec" class="section">
     <h3 style="margin-top:0;">স্লাইডার সেটআপ</h3>
     <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
-        <p style="color: #666; font-size: 13px;">আপনার হোম পেজের ব্যানার বদলাতে নিচের বক্সে ছবির ডাইরেক্ট লিঙ্ক দিন।</p>
-        
+        <p style="color: #666; font-size: 13px;">হোম পেজের ব্যানার বদলাতে ছবির ডাইরেক্ট লিঙ্ক দিন।</p>
         <img id="mainBanner" src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg" alt="Preview" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee;">
-        
-        <input type="text" id="bannerUrl" placeholder="ImgBB বা অন্য সাইটের ছবির লিঙ্ক এখানে দিন" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px;">
-        
-        <button class="btn" onclick="updateBanner()" style="width: 100%; margin-top: 10px; background: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-            ব্যানার আপডেট করুন
-        </button>
+        <input type="text" id="bannerUrl" placeholder="ছবির লিঙ্ক এখানে দিন">
+        <button class="btn" onclick="updateBanner()" style="background: #28a745;">ব্যানার আপডেট করুন</button>
     </div>
 </div>
-    
-        
-    
-    
-    
-        
-    
 
-
-    
-    
-
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
@@ -128,19 +99,16 @@
     };
     firebase.initializeApp(config);
     const db = firebase.database();
-function updateBanner() {
-    const url = document.getElementById('bannerUrl').value;
-    if(!url) {
-        alert("দয়া করে একটি ছবির লিঙ্ক দিন!");
-        return;
+
+    function updateBanner() {
+        const url = document.getElementById('bannerUrl').value;
+        if(!url) return alert("দয়া করে ব্যানারের লিঙ্ক দিন!");
+        db.ref("settings/banner").set(url).then(() => {
+            alert("ব্যানার সফলভাবে আপডেট হয়েছে!");
+            document.getElementById('bannerUrl').value = "";
+        }).catch(e => alert("Error: " + e.message));
     }
-    db.ref("settings/banner").set(url).then(() => {
-        alert("ব্যানার সফলভাবে আপডেট হয়েছে!");
-        document.getElementById('bannerUrl').value = ""; // বক্স খালি করার জন্য
-    }).catch((error) => {
-        alert("সমস্যা হয়েছে: " + error.message);
-    });
-    }
+
     function toggleMenu() {
         var m = document.getElementById('sideMenu');
         m.style.left = (m.style.left === '0px') ? '-260px' : '0px';
@@ -154,39 +122,31 @@ function updateBanner() {
         }
     }
 
-    // পন্যের সংখ্যা এবং তালিকা লোড করা
     db.ref("products").on("value", snap => {
         document.getElementById('pCount').innerText = snap.numChildren();
         const list = document.getElementById('productList');
-        list.innerHTML = snap.exists() ? "" : "কোনো পণ্য খুঁজে পাওয়া যায়নি।";
+        list.innerHTML = snap.exists() ? "" : "কোনো পণ্য নেই।";
         snap.forEach(child => {
             const p = child.val();
             list.innerHTML += `<div style="background:#fff; border:1px solid #eee; margin-bottom:8px; padding:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <b>${p.name}</b><br>
-                    <small style="color:var(--red); text-decoration:line-through;">${p.regPrice}৳</small>
-                    <small style="color:var(--green); font-weight:bold;"> ${p.salePrice}৳</small>
-                </div>
-                <i class="fa fa-trash" style="color:red; cursor:pointer; padding:10px;" onclick="del('products/${child.key}')"></i>
+                <div><b>${p.name}</b><br><small>${p.salePrice}৳</small></div>
+                <i class="fa fa-trash" style="color:red; cursor:pointer;" onclick="del('products/${child.key}')"></i>
             </div>`;
         });
     });
 
-    // অর্ডার রিকোয়েস্ট লোড করা
     db.ref("orders").on("value", snap => {
         document.getElementById('oCount').innerText = snap.numChildren();
         const list = document.getElementById('orderList');
-        list.innerHTML = snap.exists() ? "" : "কোনো অর্ডার রিকোয়েস্ট নেই।";
+        list.innerHTML = snap.exists() ? "" : "কোনো অর্ডার নেই।";
         snap.forEach(child => {
             const o = child.val();
             list.innerHTML += `<div style="background:#f1f3f4; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid var(--primary);">
-                <b style="color:var(--primary)">${o.product || 'নতুন অর্ডার'}</b><br>
-                <small>কাস্টমার: ${o.customer || 'অজানা'}</small>
+                <b>${o.product}</b><br><small>কাস্টমার: ${o.customer}</small>
             </div>`;
         });
     });
 
-    // নতুন আপলোড ফাংশন (লিঙ্ক ভিত্তিক)
     function upload() {
         const img = document.getElementById('imgUrl').value;
         const name = document.getElementById('name').value;
@@ -195,43 +155,24 @@ function updateBanner() {
         const desc = document.getElementById('desc').value;
         const stock = document.getElementById('stock').value;
 
-        if(!img || !name || !salePrice) return alert("দয়া করে নাম, দাম এবং ছবির লিঙ্ক দিন!");
+        if(!img || !name || !salePrice) return alert("তথ্য পূরণ করুন!");
 
         document.getElementById('upMsg').innerText = "আপলোড হচ্ছে...";
-
         db.ref("products").push({
-            img: img,
-            name: name,
-            regPrice: regPrice,
-            salePrice: salePrice,
-            description: desc,
-            stockStatus: stock,
-            time: Date.now()
+            img, name, regPrice, salePrice, desc, stockStatus: stock, time: Date.now()
         }).then(() => {
-            alert("পণ্য সফলভাবে যোগ করা হয়েছে!");
+            alert("সফল হয়েছে!");
             document.getElementById('upMsg').innerText = "";
-            // ফর্ম ক্লিয়ার করা
             document.getElementById('imgUrl').value = "";
             document.getElementById('name').value = "";
             document.getElementById('regPrice').value = "";
             document.getElementById('salePrice').value = "";
             document.getElementById('desc').value = "";
-        }).catch(e => {
-            alert("Error: " + e.message);
-            document.getElementById('upMsg').innerText = "";
-        });
+        }).catch(e => alert(e.message));
     }
-function updateBanner() {
-    const url = document.getElementById('bannerUrl').value;
-    if(!url) return alert("দয়া করে ব্যানারের লিঙ্ক দিন!");
-    db.ref("settings/banner").set(url).then(() => {
-        alert("ব্যানার সফলভাবে আপডেট হয়েছে!");
-        document.getElementById('bannerUrl').value = "";
-    }).catch(e => alert("Error: " + e.message));
-}
 
     function del(path) {
-        if(confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?")) {
+        if(confirm("ডিলিট করতে চান?")) {
             db.ref(path).remove().then(() => alert("ডিলিট হয়েছে!"));
         }
     }
