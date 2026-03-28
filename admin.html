@@ -36,11 +36,39 @@
     </style>
 </head>
 <body>
-
-    <div class="admin-header">
-        <h1>Admin Central</h1>
-        <p>Welcome back, Administrator</p>
+    
+  <div class="admin-header" style="display: flex; align-items: center; padding: 20px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <i class="fa fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:24px; margin-right: 20px; color: #1a237e;"></i>
+    <div style="text-align: left;">
+        <h1 style="margin: 0; font-size: 22px; color: #1a237e;">Admin Central</h1>
+        <p style="margin: 0; font-size: 14px; color: #666;">Welcome back, Administrator</p>
     </div>
+</div>
+
+<div id="sideMenu" style="position:fixed; left:-250px; width:250px; height:100%; background:#fff; transition:0.3s; z-index:1000; box-shadow:2px 0 10px rgba(0,0,0,0.2); top:0;">
+    <div style="padding:25px; background:#1a237e; color:#fff; font-size: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <b>Step Up BD</b>
+        <i class="fa fa-times" onclick="toggleMenu()" style="cursor:pointer; font-size: 18px;"></i>
+    </div>
+    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500;" onclick="showSection('uploadSec'); toggleMenu()">
+        <i class="fa fa-plus-circle" style="margin-right: 10px; color: #ff5e00;"></i> Add Product
+    </div>
+    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500;" onclick="showSection('orderSec'); toggleMenu()">
+        <i class="fa fa-shopping-cart" style="margin-right: 10px; color: #ff5e00;"></i> Order Requests
+    </div>
+    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500;" onclick="showSection('sliderSec'); toggleMenu()">
+        <i class="fa fa-image" style="margin-right: 10px; color: #ff5e00;"></i> Slider Setup
+    </div>
+    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500; color: red;" onclick="logout()">
+        <i class="fa fa-sign-out-alt" style="margin-right: 10px;"></i> Logout
+    </div>
+</div>   
+    
+    
+    
+    
+
+    
 
     <div class="stats">
         <div class="stat-card">
