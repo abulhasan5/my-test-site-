@@ -1,117 +1,4 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBD | Admin Central</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding-bottom: 50px; }
-        .admin-header { background: white; padding: 25px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .admin-header h1 { margin: 0; font-size: 24px; color: #1a237e; }
-        
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #edf2f7; }
-        .stat-card h2 { margin: 0; font-size: 24px; color: #333; }
-        .stat-card p { margin: 5px 0 0; font-size: 12px; color: #888; text-transform: uppercase; }
-
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
-        .menu-item { background: Red; padding: 25px 10px; border-radius: 25px; text-align: center; cursor: pointer; border: 1px solid #edf2f7; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .menu-item i { font-size: 28px; margin-bottom: 12px; display: block; }
-        .menu-item span { font-size: 14px; font-weight: 600; color: #2d3748; }
-
-        /* Sections */
-        .section { display: none; padding: 20px; background: white; margin: 20px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .active-section { display: block; }
-        
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; }
-        .btn { background: #ff5e00; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        
-        .list-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
-        .delete-btn { color: red; cursor: pointer; padding: 5px; }
-    </style>
-</head>
-<body>
-    
-  <div class="admin-header" style="display: flex; align-items: center; padding: 20px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-    <i class="fa fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:24px; margin-right: 20px; color: #1a237e;"></i>
-    <div style="text-align: left;">
-        <h1 style="margin: 0; font-size: 22px; color: #1a237e;">Admin Central</h1>
-        <p style="margin: 0; font-size: 14px; color: #666;">Welcome back, Administrator</p>
-    </div>
-</div>
-
-<div id="sideMenu" style="position:fixed; left:-250px; width:250px; height:100%; background:#fff; transition:0.3s; z-index:1000; box-shadow:2px 0 10px rgba(0,0,0,0.2); top:0;">
-    <div style="padding:25px; background:#1a237e; color:#fff; font-size: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <b>Step Up BD</b>
-        <i class="fa fa-times" onclick="toggleMenu()" style="cursor:pointer; font-size: 18px;"></i>
-    </div>
-    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500;" onclick="showSection('uploadSec'); toggleMenu()">
-        <i class="fa fa-plus-circle" style="margin-right: 10px; color: #ff5e00;"></i> Add Product
-    </div>
-    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500;" onclick="showSection('orderSec'); toggleMenu()">
-        <i class="fa fa-shopping-cart" style="margin-right: 10px; color: #ff5e00;"></i> Order Requests
-    </div>
-    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500;" onclick="showSection('sliderSec'); toggleMenu()">
-        <i class="fa fa-image" style="margin-right: 10px; color: #ff5e00;"></i> Slider Setup
-    </div>
-    <div style="padding:15px 25px; border-bottom:1px solid #f0f0f0; cursor:pointer; font-weight: 500; color: red;" onclick="logout()">
-        <i class="fa fa-sign-out-alt" style="margin-right: 10px;"></i> Logout
-    </div>
-</div>   
-    
-    
-    
-    
-
-    
-    <div class="stats">
-        <div class="stat-card">
-            <h2 id="pCount">0</h2>
-            <p>Products</p>
-        </div>
-        <div class="stat-card">
-            <h2 id="oCount">0</h2>
-            <p>Orders</p>
-        </div>
-    </div>
-
-    <div class="menu-grid">
-        <div class="menu-item" onclick="showSection('uploadSec')"><i class="fa fa-plus-circle" style="color: #ed8936;"></i><span>Add Product</span></div>
-        <div class="menu-item" onclick="showSection('orderSec')"><i class="fa fa-shopping-cart" style="color: #667eea;"></i><span>Order Requests</span></div>
-        <div class="menu-item" onclick="showSection('manageSec')"><i class="fa fa-tasks" style="color: #4299e1;"></i><span>Manage Products</span></div>
-        <div class="menu-item" onclick="showSection('sliderSec')"><i class="fa fa-image" style="color: #ecc94b;"></i><span>Slider Setup</span></div>
-    </div>
-
-    <div id="uploadSec" class="section">
-        <h3>পণ্য যোগ করুন</h3>
-        <input type="file" id="file" accept="image/*">
-        <input type="text" id="name" placeholder="নাম">
-        <input type="text" id="price" placeholder="দাম">
-        <button class="btn" onclick="upload()">আপলোড করুন</button>
-        <p id="upMsg" style="text-align:center;"></p>
-    </div>
-
-    <div id="orderSec" class="section">
-        <h3>অর্ডার লিস্ট</h3>
-        <div id="orderList">লোডিং...</div>
-    </div>
-
-    <div id="manageSec" class="section">
-        <h3>পণ্য ডিলিট করুন</h3>
-        <div id="productList">লোডিং...</div>
-    </div>
-<div id="sliderSec" class="section">
-    <h3>স্লাইডার ব্যানার যোগ করুন</h3>
-    <input type="file" id="sFile" accept="image/*">
-    <button class="btn" onclick="uploadSlider()">ব্যানার আপলোড করুন</button>
-    <div id="sliderList" style="margin-top:20px;"></div>
-</div>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
@@ -128,39 +15,55 @@ firebase.initializeApp(config);
 const db = firebase.database();
 const st = firebase.storage();
 
-// ২. মেনু এবং সেকশন কন্ট্রোল
+// ২. মেনু কন্ট্রোল (Sidebar Toggle)
 function toggleMenu() {
     var menu = document.getElementById('sideMenu');
-    if (menu.style.left === '0px') {
+    if (menu.style.left === '0px' || menu.style.left === '0') {
         menu.style.left = '-250px';
     } else {
         menu.style.left = '0px';
     }
 }
 
+// ৩. সেকশন পরিবর্তন (অত্যন্ত নিখুঁত লজিক)
 function showSection(id) {
     var sections = document.querySelectorAll('.section');
-    sections.forEach(s => s.classList.remove('active-section'));
+    sections.forEach(function(sec) {
+        sec.style.display = 'none'; // সব বন্ধ হবে
+    });
     var target = document.getElementById(id);
-    if(target) target.classList.add('active-section');
+    if(target) {
+        target.style.display = 'block'; // শুধু কাঙ্ক্ষিতটি খুলবে
+    }
     window.scrollTo(0,0);
 }
 
-// ৩. ডাটা লোড করা (পণ্য এবং অর্ডার)
+// ৪. পণ্য লোড করা (Realtime)
 db.ref("products").on("value", snap => {
-    document.getElementById('pCount').innerText = snap.numChildren();
+    const pCount = document.getElementById('pCount');
+    if(pCount) pCount.innerText = snap.numChildren();
+    
     const list = document.getElementById('productList');
     if(list) {
         list.innerHTML = "";
         snap.forEach(child => {
             const p = child.val();
-            list.innerHTML += `<div class="list-item"><span>${p.name}</span> <i class="fa fa-trash" style="color:red; cursor:pointer;" onclick="del('products/${child.key}')"></i></div>`;
+            list.innerHTML += `
+                <div class="list-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+                    <span>${p.name}</span> 
+                    <i class="fa fa-trash" style="color:red; cursor:pointer;" onclick="del('products/${child.key}')"></i>
+                </div>`;
         });
     }
+}, error => {
+    console.log("Error loading products: ", error);
 });
 
+// ৫. অর্ডার লোড করা
 db.ref("orders").on("value", snap => {
-    document.getElementById('oCount').innerText = snap.numChildren();
+    const oCount = document.getElementById('oCount');
+    if(oCount) oCount.innerText = snap.numChildren();
+    
     const list = document.getElementById('orderList');
     if(list) {
         list.innerHTML = "";
@@ -171,33 +74,47 @@ db.ref("orders").on("value", snap => {
     }
 });
 
-// ৪. পণ্য আপলোড ফাংশন
+// ৬. পণ্য আপলোড করার ফাংশন
 async function upload() {
     const file = document.getElementById('file').files[0];
     const name = document.getElementById('name').value;
     const price = document.getElementById('price').value;
     const msg = document.getElementById('upMsg');
 
-    if(!file || !name || !price) return alert("সব তথ্য পূরণ করুন!");
+    if(!file || !name || !price) {
+        alert("দয়া করে ছবি, নাম এবং দাম সবগুলো দিন!");
+        return;
+    }
 
-    msg.innerText = "আপলোড হচ্ছে...";
+    msg.innerText = "আপলোড হচ্ছে, দয়া করে অপেক্ষা করুন...";
+    
     try {
-        const ref = st.ref("p/" + Date.now());
+        const fileName = Date.now() + "_" + file.name;
+        const ref = st.ref("products/" + fileName);
         await ref.put(file);
         const url = await ref.getDownloadURL();
-        await db.ref("products").push({ name: name, price: price, img: url });
+        
+        await db.ref("products").push({
+            name: name,
+            price: price,
+            img: url,
+            time: Date.now()
+        });
+        
         alert("সফলভাবে আপলোড হয়েছে!");
         location.reload();
     } catch(e) {
         alert("ভুল হয়েছে: " + e.message);
-        msg.innerText = "";
+        msg.innerText = "আবার চেষ্টা করুন";
     }
 }
 
-// ৫. ডাটা ডিলিট ফাংশন
+// ৭. ডিলিট ফাংশন
 function del(path) {
-    if(confirm("ডিলিট করতে চান?")) {
-        db.ref(path).remove().then(() => alert("ডিলিট সফল!"));
+    if(confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?")) {
+        db.ref(path).remove()
+            .then(() => alert("সফলভাবে ডিলিট হয়েছে!"))
+            .catch(err => alert("এরর: " + err.message));
     }
 }
 </script>
