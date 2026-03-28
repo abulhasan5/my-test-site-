@@ -1,139 +1,40 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step Up BD Admin</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --blue: #1a237e; --light-bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light-bg); margin: 0; }
-        .header { background: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); sticky: top; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .card i { font-size: 24px; color: var(--blue); margin-bottom: 5px; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
-        .menu-btn { background: white; padding: 25px 10px; border-radius: 20px; text-align: center; cursor: pointer; border: 1px solid #eee; }
-        .menu-btn i { font-size: 28px; color: var(--blue); display: block; margin-bottom: 8px; }
-        .section { display: none; padding: 20px; background: white; margin: 20px; border-radius: 15px; }
-        .active { display: block; animation: fadeIn 0.3s; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .btn { background: var(--blue); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #sideMenu { position: fixed; left: -250px; width: 250px; height: 100%; background: white; transition: 0.3s; z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.1); top: 0; }
-    </style>
-</head>
-<body>
+// --- জাভাস্ক্রিপ্ট এর এই অংশটুকু একটু মিলিয়ে নিন ---
 
-<div class="header">
-    <i class="fa fa-bars" onclick="toggleMenu()" style="font-size: 22px; color: var(--blue); margin-right: 15px;"></i>
-    <div><b style="color: var(--blue);">Step Up BD Admin</b><br><small>Manage store effectively</small></div>
-</div>
-
-<div id="sideMenu">
-    <div style="padding: 25px; background: var(--blue); color: white;"><b>Menu</b></div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee;" onclick="show('upSec')">Add Product</div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee;" onclick="show('orderSec')">Orders</div>
-</div>
-
-<div class="stats">
-    <div class="card"><i class="fa fa-box"></i><h2 id="pCount">0</h2><small>Products</small></div>
-    <div class="card"><i class="fa fa-receipt"></i><h2 id="oCount">0</h2><small>Orders</small></div>
-</div>
-
-<div class="menu-grid">
-    <div class="menu-btn" onclick="show('upSec')"><i class="fa fa-upload"></i><span>Add Product</span></div>
-    <div class="menu-btn" onclick="show('orderSec')"><i class="fa fa-shopping-cart"></i><span>Orders</span></div>
-    <div class="menu-btn" onclick="show('manageSec')"><i class="fa fa-list"></i><span>Manage Items</span></div>
-    <div class="menu-btn" onclick="show('sliderSec')"><i class="fa fa-image"></i><span>Slider</span></div>
-</div>
-
-<div id="upSec" class="section">
-    <h3>পণ্য যোগ করুন</h3>
-    <input type="file" id="file" accept="image/*">
-    <input type="text" id="name" placeholder="নাম">
-    <input type="number" id="price" placeholder="দাম">
-    <button class="btn" onclick="upload()">আপলোড</button>
-    <p id="upMsg" style="text-align:center; color:orange;"></p>
-</div>
-
-<div id="orderSec" class="section active">
-    <h3>অর্ডার রিকোয়েস্ট</h3>
-    <div id="orderList">লোড হচ্ছে...</div>
-</div>
-
-<div id="manageSec" class="section">
-    <h3>পণ্য লিস্ট</h3>
-    <div id="productList">লোড হচ্ছে...</div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
-<script>
-    const config = {
-        apiKey: "AIzaSyD23rPr72npvtYsZBkoK4uvsh8VneLg",
-        authDomain: "stepupbd-211d1.firebaseapp.com",
-        projectId: "stepupbd-211d1",
-        storageBucket: "stepupbd-211d1.appspot.com",
-        databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(config);
-    const db = firebase.database(), st = firebase.storage();
-
-    function toggleMenu() {
-        var m = document.getElementById('sideMenu');
-        m.style.left = (m.style.left === '0px') ? '-250px' : '0px';
+function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // মোবাইল স্ক্রিনে মেনু বন্ধ করার আরও নিরাপদ উপায়
+    if(window.innerWidth < 768) {
+        document.getElementById('sideMenu').style.left = '-250px';
     }
+}
 
-    function show(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(window.innerWidth < 768) toggleMenu();
-    }
-
-    // Real-time Listeners
-    db.ref("products").on("value", snap => {
-        document.getElementById('pCount').innerText = snap.numChildren();
-        const list = document.getElementById('productList');
-        list.innerHTML = "";
-        snap.forEach(child => {
-            const p = child.val();
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-                <span>${p.name}</span> <i class="fa fa-trash" style="color:red" onclick="del('products/${child.key}')"></i>
-            </div>`;
-        });
+// প্রোডাক্ট লিস্ট দেখানোর লজিক
+db.ref("products").on("value", snap => {
+    document.getElementById('pCount').innerText = snap.numChildren();
+    const list = document.getElementById('productList');
+    // ডাটা না থাকলে লোডিং মেসেজ সরিয়ে ফেলবে
+    list.innerHTML = snap.exists() ? "" : "কোনো পণ্য লিস্টে নেই।";
+    snap.forEach(child => {
+        const p = child.val();
+        list.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee;">
+            <span>${p.name} - ${p.price}৳</span> 
+            <i class="fa fa-trash" style="color:red; cursor:pointer" onclick="del('products/${child.key}')"></i>
+        </div>`;
     });
+});
 
-    db.ref("orders").on("value", snap => {
-        document.getElementById('oCount').innerText = snap.numChildren();
-        const list = document.getElementById('orderList');
-        list.innerHTML = snap.exists() ? "" : "কোনো অর্ডার নেই।";
-        snap.forEach(child => {
-            const o = child.val();
-            list.innerHTML += `<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:10px;">
-                <b>${o.product || 'Order'}</b><br><small>${o.customer || 'Customer'}</small>
-            </div>`;
-        });
+// অর্ডার লিস্ট দেখানোর লজিক
+db.ref("orders").on("value", snap => {
+    document.getElementById('oCount').innerText = snap.numChildren();
+    const list = document.getElementById('orderList');
+    // ডাটা আসলে লোডিং লেখা চলে যাবে
+    list.innerHTML = snap.exists() ? "" : "কোনো অর্ডার রিকোয়েস্ট নেই।";
+    snap.forEach(child => {
+        const o = child.val();
+        list.innerHTML += `<div style="background:#f1f3f4; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid var(--blue);">
+            <b style="color:var(--blue)">${o.product || 'নতুন অর্ডার'}</b><br>
+            <small>কাস্টমার: ${o.customer || 'অজানা'}</small>
+        </div>`;
     });
-
-    async function upload() {
-        const f = document.getElementById('file').files[0], n = document.getElementById('name').value, p = document.getElementById('price').value;
-        if(!f || !n || !p) return alert("সব তথ্য দিন!");
-        document.getElementById('upMsg').innerText = "আপলোড হচ্ছে...";
-        try {
-            const ref = st.ref("p/" + Date.now());
-            await ref.put(f);
-            const url = await ref.getDownloadURL();
-            await db.ref("products").push({name:n, price:p, img:url});
-            alert("সফল!"); location.reload();
-        } catch(e) { alert(e.message); document.getElementById('upMsg').innerText = ""; }
-    }
-
-    function del(path) {
-        if(confirm("ডিলিট করবেন?")) db.ref(path).remove();
-    }
-</script>
-</body>
-</html>
+});
