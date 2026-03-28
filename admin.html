@@ -6,7 +6,7 @@
     <title>Step Up BD Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --blue: #1a237e; --light-bg: #f8f9fa; }
+        :root { --blue: #1a237e; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light-bg); margin: 0; padding-bottom: 30px; }
         .header { background: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
@@ -18,8 +18,9 @@
         .menu-btn i { font-size: 28px; color: var(--blue); display: block; margin-bottom: 8px; }
         .section { display: none; padding: 20px; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .active { display: block; animation: fadeIn 0.3s; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        .btn { background: var(--blue); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; font-family: inherit; }
+        textarea { height: 80px; resize: none; }
+        .btn { background: var(--blue); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #sideMenu { position: fixed; left: -260px; width: 260px; height: 100%; background: white; transition: 0.3s; z-index: 1000; box-shadow: 2px 0 15px rgba(0,0,0,0.1); top: 0; }
     </style>
@@ -33,8 +34,8 @@
 
 <div id="sideMenu">
     <div style="padding: 30px 25px; background: var(--blue); color: white; font-size: 18px;"><b>Admin Menu</b></div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('upSec')">Add New Product</div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('orderSec')">Order Requests</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('upSec')">নতুন পণ্য যোগ করুন</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('orderSec')">অর্ডার রিকোয়েস্ট</div>
     <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="location.reload()">Refresh App</div>
 </div>
 
@@ -44,17 +45,23 @@
 </div>
 
 <div class="menu-grid">
-    <div class="menu-btn" onclick="show('upSec')"><i class="fa fa-upload"></i><span>Add Product</span></div>
+    <div class="menu-btn" onclick="show('upSec')"><i class="fa fa-plus-circle"></i><span>Add Product</span></div>
     <div class="menu-btn" onclick="show('orderSec')"><i class="fa fa-shopping-cart"></i><span>Orders</span></div>
-    <div class="menu-btn" onclick="show('manageSec')"><i class="fa fa-list"></i><span>Manage Items</span></div>
-    <div class="menu-btn" onclick="show('sliderSec')"><i class="fa fa-image"></i><span>Slider Setup</span></div>
+    <div class="menu-btn" onclick="show('manageSec')"><i class="fa fa-tasks"></i><span>Manage Items</span></div>
+    <div class="menu-btn" onclick="show('sliderSec')"><i class="fa fa-images"></i><span>Slider Setup</span></div>
 </div>
 
 <div id="upSec" class="section">
-    <h3>নতুন পণ্য যোগ করুন</h3>
-    <input type="file" id="file" accept="image/*">
+    <h3 style="color:var(--blue); margin-top:0;"><i class="fa fa-cart-plus"></i> নতুন পণ্য যোগ করুন</h3>
+    <input type="text" id="imgUrl" placeholder="ছবির লিঙ্ক দিন (ImgBB বা সরাসরি লিঙ্ক)">
     <input type="text" id="name" placeholder="পণ্যের নাম">
-    <input type="number" id="price" placeholder="দাম (টাকা)">
+    <input type="number" id="regPrice" placeholder="আসল দাম (যেটা কাটা যাবে)">
+    <input type="number" id="salePrice" placeholder="অফার দাম (বর্তমান দাম)">
+    <textarea id="desc" placeholder="পণ্যের বিবরণ (সাইজ, কালার ইত্যাদি লিখুন)"></textarea>
+    <select id="stock">
+        <option value="In Stock">স্টকে আছে</option>
+        <option value="Out of Stock">স্টক শেষ</option>
+    </select>
     <button class="btn" onclick="upload()">আপলোড করুন</button>
     <p id="upMsg" style="text-align:center; color:orange; font-weight:bold;"></p>
 </div>
@@ -76,7 +83,6 @@
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
 <script>
     const config = {
@@ -87,7 +93,7 @@
         databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
     };
     firebase.initializeApp(config);
-    const db = firebase.database(), st = firebase.storage();
+    const db = firebase.database();
 
     function toggleMenu() {
         var m = document.getElementById('sideMenu');
@@ -102,20 +108,25 @@
         }
     }
 
-    // Real-time Listeners (Corrected spelling errors)
+    // পন্যের সংখ্যা এবং তালিকা লোড করা
     db.ref("products").on("value", snap => {
         document.getElementById('pCount').innerText = snap.numChildren();
         const list = document.getElementById('productList');
         list.innerHTML = snap.exists() ? "" : "কোনো পণ্য খুঁজে পাওয়া যায়নি।";
         snap.forEach(child => {
             const p = child.val();
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee;">
-                <span>${p.name} - ${p.price}৳</span> 
-                <i class="fa fa-trash" style="color:red; cursor:pointer" onclick="del('products/${child.key}')"></i>
+            list.innerHTML += `<div style="background:#fff; border:1px solid #eee; margin-bottom:8px; padding:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b>${p.name}</b><br>
+                    <small style="color:var(--red); text-decoration:line-through;">${p.regPrice}৳</small>
+                    <small style="color:var(--green); font-weight:bold;"> ${p.salePrice}৳</small>
+                </div>
+                <i class="fa fa-trash" style="color:red; cursor:pointer; padding:10px;" onclick="del('products/${child.key}')"></i>
             </div>`;
         });
     });
 
+    // অর্ডার রিকোয়েস্ট লোড করা
     db.ref("orders").on("value", snap => {
         document.getElementById('oCount').innerText = snap.numChildren();
         const list = document.getElementById('orderList');
@@ -129,23 +140,40 @@
         });
     });
 
-    async function upload() {
-        const fileInput = document.getElementById('file');
-        const f = fileInput.files[0], n = document.getElementById('name').value, p = document.getElementById('price').value;
-        if(!f || !n || !p) return alert("দয়া করে সব তথ্য পূরণ করুন!");
-        
-        document.getElementById('upMsg').innerText = "আপলোড হচ্ছে... একটু অপেক্ষা করুন।";
-        try {
-            const ref = st.ref("p/" + Date.now());
-            await ref.put(f);
-            const url = await ref.getDownloadURL();
-            await db.ref("products").push({name:n, price:p, img:url});
+    // নতুন আপলোড ফাংশন (লিঙ্ক ভিত্তিক)
+    function upload() {
+        const img = document.getElementById('imgUrl').value;
+        const name = document.getElementById('name').value;
+        const regPrice = document.getElementById('regPrice').value;
+        const salePrice = document.getElementById('salePrice').value;
+        const desc = document.getElementById('desc').value;
+        const stock = document.getElementById('stock').value;
+
+        if(!img || !name || !salePrice) return alert("দয়া করে নাম, দাম এবং ছবির লিঙ্ক দিন!");
+
+        document.getElementById('upMsg').innerText = "আপলোড হচ্ছে...";
+
+        db.ref("products").push({
+            img: img,
+            name: name,
+            regPrice: regPrice,
+            salePrice: salePrice,
+            description: desc,
+            stockStatus: stock,
+            time: Date.now()
+        }).then(() => {
             alert("পণ্য সফলভাবে যোগ করা হয়েছে!");
-            location.reload();
-        } catch(e) { 
-            alert("Error: " + e.message); 
-            document.getElementById('upMsg').innerText = ""; 
-        }
+            document.getElementById('upMsg').innerText = "";
+            // ফর্ম ক্লিয়ার করা
+            document.getElementById('imgUrl').value = "";
+            document.getElementById('name').value = "";
+            document.getElementById('regPrice').value = "";
+            document.getElementById('salePrice').value = "";
+            document.getElementById('desc').value = "";
+        }).catch(e => {
+            alert("Error: " + e.message);
+            document.getElementById('upMsg').innerText = "";
+        });
     }
 
     function del(path) {
