@@ -79,8 +79,20 @@
 
 <div id="sliderSec" class="section">
     <h3>স্লাইডার সেটআপ</h3>
-    <p style="text-align:center; color:#666;">স্লাইডার ফিচার শীঘ্রই আসছে...</p>
-</div>
+    <img id="mainBanner" src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg" alt="Welcome Offer">
+<div id="sliderSec" class="section">  <h3>স্লাইডার সেটআপ</h3>            <img id="mainBanner" src="...">      <br>
+    <input type="text" id="bannerUrl" placeholder="ব্যানারের লিঙ্ক দিন" style="width: 80%; padding: 10px; margin: 10px 0;">
+    <br>
+    <button class="btn" onclick="updateBanner()">ব্যানার আপডেট করুন</button>
+</div> ```
+
+**কেন ৮৩ লাইনে এটা গুরুত্বপূর্ণ:**
+* আপনার জাভাস্ক্রিপ্ট কোডটি (লাইন ৯৯) `bannerUrl` আইডি থেকে লিঙ্কটি খোঁজে। 
+* এই ইনপুট বক্সটি না থাকলে আপনি লিঙ্ক পেস্ট করার জায়গা পাবেন না এবং ফাংশনটি কাজ করবে না।
+
+**একটি ছোট রিমাইন্ডার:** আপনার ১০৬ নম্বর লাইনের শেষে `valu` এর বদলে `value = "";` লিখে দিতে ভুলবেন না, যাতে বাটন চাপলে বক্সটি খালি হয়ে যায়।
+
+এটা বসানো হয়ে গেলে কি একবার সেভ করে চেক করবেন? কোনো এরর (Error) আসলে আমাকে স্ক্রিনশট দিয়েন।
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -95,7 +107,19 @@
     };
     firebase.initializeApp(config);
     const db = firebase.database();
-
+function updateBanner() {
+    const url = document.getElementById('bannerUrl').value;
+    if(!url) {
+        alert("দয়া করে একটি ছবির লিঙ্ক দিন!");
+        return;
+    }
+    db.ref("settings/banner").set(url).then(() => {
+        alert("ব্যানার সফলভাবে আপডেট হয়েছে!");
+        document.getElementById('bannerUrl').value = ""; // বক্স খালি করার জন্য
+    }).catch((error) => {
+        alert("সমস্যা হয়েছে: " + error.message);
+    });
+    }
     function toggleMenu() {
         var m = document.getElementById('sideMenu');
         m.style.left = (m.style.left === '0px') ? '-260px' : '0px';
