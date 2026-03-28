@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step Up BD Admin</title>
+    <title>BUY BD Admin | Manage Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --blue: #1a237e; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; }
+        /* কালার ভেরিয়েবল পরিবর্তন - গাড় নীল রঙ */
+        :root { --primary: #0d47a1; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light-bg); margin: 0; padding-bottom: 30px; }
         .header { background: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--blue); }
-        .card i { font-size: 24px; color: var(--blue); margin-bottom: 5px; }
+        .card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
+        .card i { font-size: 24px; color: var(--primary); margin-bottom: 5px; }
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
         .menu-btn { background: white; padding: 25px 10px; border-radius: 20px; text-align: center; cursor: pointer; border: 1px solid #eee; transition: 0.2s; }
         .menu-btn:active { transform: scale(0.95); background: #f0f2f5; }
-        .menu-btn i { font-size: 28px; color: var(--blue); display: block; margin-bottom: 8px; }
+        .menu-btn i { font-size: 28px; color: var(--primary); display: block; margin-bottom: 8px; }
         .section { display: none; padding: 20px; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .active { display: block; animation: fadeIn 0.3s; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; font-family: inherit; }
         textarea { height: 80px; resize: none; }
-        .btn { background: var(--blue); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn { background: var(--primary); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #sideMenu { position: fixed; left: -260px; width: 260px; height: 100%; background: white; transition: 0.3s; z-index: 1000; box-shadow: 2px 0 15px rgba(0,0,0,0.1); top: 0; }
     </style>
@@ -28,12 +29,12 @@
 <body>
 
 <div class="header">
-    <i class="fa fa-bars" onclick="toggleMenu()" style="font-size: 22px; color: var(--blue); margin-right: 15px; cursor: pointer;"></i>
-    <div><b style="color: var(--blue);">Step Up BD Admin</b><br><small>Manage store effectively</small></div>
+    <i class="fa fa-bars" onclick="toggleMenu()" style="font-size: 22px; color: var(--primary); margin-right: 15px; cursor: pointer;"></i>
+    <div><b style="color: var(--primary);">BUY BD Admin</b><br><small>Manage store effectively</small></div>
 </div>
 
 <div id="sideMenu">
-    <div style="padding: 30px 25px; background: var(--blue); color: white; font-size: 18px;"><b>Admin Menu</b></div>
+    <div style="padding: 30px 25px; background: var(--primary); color: white; font-size: 18px;"><b>Admin Menu</b></div>
     <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('upSec')">নতুন পণ্য যোগ করুন</div>
     <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('orderSec')">অর্ডার রিকোয়েস্ট</div>
     <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="location.reload()">Refresh App</div>
@@ -52,7 +53,7 @@
 </div>
 
 <div id="upSec" class="section">
-    <h3 style="color:var(--blue); margin-top:0;"><i class="fa fa-cart-plus"></i> নতুন পণ্য যোগ করুন</h3>
+    <h3 style="color:var(--primary); margin-top:0;"><i class="fa fa-cart-plus"></i> নতুন পণ্য যোগ করুন</h3>
     <input type="text" id="imgUrl" placeholder="ছবির লিঙ্ক দিন (ImgBB বা সরাসরি লিঙ্ক)">
     <input type="text" id="name" placeholder="পণ্যের নাম">
     <input type="number" id="regPrice" placeholder="আসল দাম (যেটা কাটা যাবে)">
@@ -86,7 +87,7 @@
 
 <script>
     const config = {
-        apiKey: "AIzaSyD23rPr72npvtYsZBkoK4uvsh8VneLg",
+        apiKey: "AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
         authDomain: "stepupbd-211d1.firebaseapp.com",
         projectId: "stepupbd-211d1",
         storageBucket: "stepupbd-211d1.appspot.com",
@@ -133,8 +134,8 @@
         list.innerHTML = snap.exists() ? "" : "কোনো অর্ডার রিকোয়েস্ট নেই।";
         snap.forEach(child => {
             const o = child.val();
-            list.innerHTML += `<div style="background:#f1f3f4; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid var(--blue);">
-                <b style="color:var(--blue)">${o.product || 'নতুন অর্ডার'}</b><br>
+            list.innerHTML += `<div style="background:#f1f3f4; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid var(--primary);">
+                <b style="color:var(--primary)">${o.product || 'নতুন অর্ডার'}</b><br>
                 <small>কাস্টমার: ${o.customer || 'অজানা'}</small>
             </div>`;
         });
