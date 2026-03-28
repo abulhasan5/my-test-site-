@@ -3,58 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBD Admin | Upload</title>
+    <title>SmartBD | Admin Central</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
     <style>
-        body { font-family: sans-serif; background: #fdfaf7; padding: 20px; }
-        .box { background: white; max-width: 400px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 5px solid #ff5e00; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { background: #ff5e00; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        #msg { text-align: center; color: #ff5e00; margin-top: 10px; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding-bottom: 30px; }
+        .admin-header { background: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .admin-header h1 { margin: 0; font-size: 24px; color: #1a237e; }
+        .admin-header p { margin: 5px 0 0; color: #777; font-size: 14px; }
+
+        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #edf2f7; }
+        .stat-card i { font-size: 24px; margin-bottom: 10px; display: block; }
+        .stat-card h2 { margin: 0; font-size: 22px; color: #333; }
+        .stat-card p { margin: 5px 0 0; font-size: 12px; color: #888; text-transform: uppercase; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+        .menu-item { background: white; padding: 25px 10px; border-radius: 25px; text-align: center; cursor: pointer; border: 1px solid #edf2f7; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .menu-item:active { transform: scale(0.95); background: #fcfcfc; }
+        .menu-item i { font-size: 28px; margin-bottom: 12px; display: block; }
+        .menu-item span { font-size: 14px; font-weight: 600; color: #2d3748; display: block; }
+
+        /* Modal for Uploading */
+        #uploadModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; position: relative; }
+        .modal-content h2 { margin-top: 0; font-size: 20px; color: #333; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; }
+        .btn-upload { background: #ff5e00; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 20px; color: #999; cursor: pointer; }
+        #statusMsg { text-align: center; font-size: 13px; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2 style="text-align:center; color:#333;">SmartBD Admin</h2>
-        <p style="font-size:13px; color:#666;">পণ্য আপলোড করুন সরাসরি গ্যালারি থেকে:</p>
-        <input type="file" id="pic" accept="image/*">
-        <input type="text" id="name" placeholder="পণ্যের নাম">
-        <input type="text" id="price" placeholder="দাম (৳)">
-        <button onclick="upload()">সরাসরি আপলোড করুন</button>
-        <div id="msg"></div>
+
+    <div class="admin-header">
+        <h1>Admin Central</h1>
+        <p>Welcome back, Administrator</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <i class="fa fa-box" style="color: #3182ce;"></i>
+            <h2 id="pCount">0</h2>
+            <p>Products</p>
+        </div>
+        <div class="stat-card">
+            <i class="fa fa-receipt" style="color: #38b2ac;"></i>
+            <h2 id="oCount">0</h2>
+            <p>Orders</p>
+        </div>
+    </div>
+
+    <div class="menu-grid">
+        <div class="menu-item" onclick="openModal()">
+            <i class="fa fa-plus-circle" style="color: #ed8936;"></i>
+            <span>Add Product</span>
+        </div>
+        <div class="menu-item">
+            <i class="fa fa-shopping-cart" style="color: #667eea;"></i>
+            <span>Order Requests</span>
+        </div>
+        <div class="menu-item">
+            <i class="fa fa-tasks" style="color: #4299e1;"></i>
+            <span>Manage Products</span>
+        </div>
+        <div class="menu-item">
+            <i class="fa fa-image" style="color: #ecc94b;"></i>
+            <span>Slider Setup</span>
+        </div>
+    </div>
+
+    <div id="uploadModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>পণ্য যোগ করুন</h2>
+            <input type="file" id="imgFile" accept="image/*">
+            <input type="text" id="pName" placeholder="পণ্যের নাম">
+            <input type="text" id="pPrice" placeholder="দাম (যেমন: ৫০০)">
+            <button class="btn-upload" onclick="startUpload()">সরাসরি আপলোড দিন</button>
+            <div id="statusMsg"></div>
+        </div>
     </div>
 
     <script>
-        const config = {
+        const firebaseConfig = {
             apiKey: "AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
             authDomain: "stepupbd-211d1.firebaseapp.com",
             projectId: "stepupbd-211d1",
             storageBucket: "stepupbd-211d1.appspot.com",
             databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
         };
-        firebase.initializeApp(config);
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const st = firebase.storage();
 
-        async function upload() {
-            const file = document.getElementById('pic').files[0];
-            const name = document.getElementById('name').value;
-            const price = document.getElementById('price').value;
-            const msg = document.getElementById('msg');
+        // সংখ্যার আপডেট
+        db.ref('products').on('value', s => document.getElementById('pCount').innerText = s.numChildren());
+        db.ref('orders').on('value', s => document.getElementById('oCount').innerText = s.numChildren());
 
-            if(!file || !name || !price) return alert("সব ঘর পূরণ করুন!");
-            msg.innerText = "আপলোড হচ্ছে...";
+        function openModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('uploadModal').style.display = 'none'; }
+
+        async function startUpload() {
+            const file = document.getElementById('imgFile').files[0];
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const msg = document.getElementById('statusMsg');
+
+            if(!file || !name || !price) return alert("সব তথ্য পূরণ করুন!");
+            msg.innerText = "আপলোড হচ্ছে... একটু সময় দিন।";
+            msg.style.color = "#ff5e00";
 
             try {
-                const ref = st.ref('products/' + Date.now() + file.name);
-                await ref.put(file);
-                const url = await ref.getDownloadURL();
+                const storageRef = st.ref('products/' + Date.now() + "_" + file.name);
+                await storageRef.put(file);
+                const url = await storageRef.getDownloadURL();
+                
                 await db.ref('products').push({ name, price, img: url });
+                
                 msg.innerText = "সফলভাবে আপলোড হয়েছে!";
-                setTimeout(() => location.reload(), 2000);
-            } catch(e) { msg.innerText = "ব্যর্থ হয়েছে! Storage Rules চেক করুন।"; }
+                msg.style.color = "green";
+                setTimeout(() => { closeModal(); location.reload(); }, 1500);
+            } catch (e) {
+                msg.innerText = "ব্যর্থ হয়েছে! Storage Rules চেক করুন।";
+                msg.style.color = "red";
+            }
         }
     </script>
 </body>
