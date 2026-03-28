@@ -130,7 +130,23 @@
             alert("সফল!"); location.reload();
         }
 
-        function del(path) { if(confirm("ডিলিট করবেন?")) db.ref(path).remove(); }
+        function del(path) { if(confirm("ডিলিট করবেন?")) db.ref(path).remove(); }async function uploadSlider() {
+    const f = document.getElementById('sFile').files[0];
+    if(!f) return alert("ছবি সিলেক্ট করুন!");
+    const ref = st.ref('sliders/' + Date.now());
+    await ref.put(f);
+    const url = await ref.getDownloadURL();
+    await db.ref('sliders').push({img: url});
+    alert("ব্যানার যোগ হয়েছে!"); location.reload();
+}
+
+db.ref('sliders').on('value', snap => {
+    const list = document.getElementById('sliderList');
+    list.innerHTML = "<b>বর্তমান ব্যানার:</b>";
+    snap.forEach(child => {
+        list.innerHTML += `<div class="list-item"><img src="${child.val().img}" width="60" height="35" style="border-radius:5px"> <i class="fa fa-trash delete-btn" onclick="del('sliders/${child.key}')"></i></div>`;
+    });
+});
     </script>
 </body>
 </html>
