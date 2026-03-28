@@ -3,52 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBD | Your Ultimate Shop</title>
+    <title>BUY BD | Your Reliable E-commerce Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --primary: #ff5e00; --bg: #fdfaf7; --red: #e53935; --green: #43a047; }
+        /* কালার ভেরিয়েবল পরিবর্তন - গাড় নীল রঙ */
+        :root { --primary: #0d47a1; --bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
         
-        .header { background: var(--primary); padding: 20px 15px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(255, 94, 0, 0.2); }
-        .brand-name { color: white; font-size: 26px; font-weight: 800; margin-bottom: 15px; display: block; letter-spacing: 1px; }
+        .header { background: var(--primary); padding: 15px 15px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(13, 71, 161, 0.2); }
+        .brand-name { color: white; font-size: 24px; font-weight: 800; margin-bottom: 12px; display: block; letter-spacing: 1px; }
         .search-container { position: relative; }
-        .search-container input { width: 100%; padding: 14px 45px; border-radius: 15px; border: none; box-sizing: border-box; font-size: 14px; outline: none; }
-        .search-container i { position: absolute; left: 15px; top: 14px; color: #ff5e00; font-size: 18px; }
+        .search-container input { width: 100%; padding: 12px 40px; border-radius: 12px; border: none; box-sizing: border-box; font-size: 14px; outline: none; }
+        /* সার্চ আইকন কালার গাড় নীল */
+        .search-container i { position: absolute; left: 12px; top: 12px; color: var(--primary); font-size: 16px; }
 
-        .banner { margin: 15px; border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); background: white; }
-        .banner img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+        .banner { margin: 15px; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); background: white; }
+        .banner img { width: 100%; display: block; max-height: 160px; object-fit: cover; }
 
-        .section-title { margin: 20px 15px 15px; font-size: 18px; font-weight: bold; color: #333; display: flex; align-items: center; }
-        .section-title::before { content: ""; width: 5px; height: 20px; background: var(--primary); margin-right: 10px; border-radius: 2px; }
+        /* ক্যাটাগরি আইকন এবং টেক্সট গাড় নীল */
+        .categories { display: flex; justify-content: space-around; padding: 10px 5px; margin-top: 5px; }
+        .cat-item { text-align: center; font-size: 11px; font-weight: 600; color: #555; }
+        .cat-icon { width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); color: var(--primary); font-size: 20px; transition: 0.3s; }
+        .cat-icon.active { background: var(--primary); color: white; box-shadow: 0 5px 12px rgba(13, 71, 161, 0.3); }
 
-        /* Product Card Styles */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 15px; }
-        .product-card { background: white; border-radius: 20px; padding: 10px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; display: flex; flex-direction: column; }
-        .product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 15px; margin-bottom: 8px; }
+        .section-title { margin: 15px 15px 12px; font-size: 17px; font-weight: bold; color: #333; display: flex; align-items: center; text-transform: uppercase; }
+        /* টাইটেল ইন্ডিকেটর গাড় নীল */
+        .section-title::before { content: ""; width: 4px; height: 18px; background: var(--primary); margin-right: 8px; border-radius: 2px; }
+
+        /* প্রোডাক্ট কার্ড স্টাইল হুবহু স্ক্রিনশটের মতো */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 12px; }
+        .product-card { background: white; border-radius: 15px; padding: 8px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #eee; display: flex; flex-direction: column; }
+        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 12px; margin-bottom: 6px; }
         
-        /* Stock Badge */
-        .stock-badge { position: absolute; top: 15px; right: 15px; padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: bold; color: white; text-transform: uppercase; }
+        /* স্টক ব্যাজ */
+        .stock-badge { position: absolute; top: 12px; right: 12px; padding: 3px 6px; border-radius: 6px; font-size: 9px; font-weight: bold; color: white; text-transform: uppercase; }
         .in-stock { background: var(--green); }
         .out-stock { background: var(--red); }
 
-        .product-card h3 { font-size: 13px; margin: 5px 0; height: 34px; overflow: hidden; color: #222; line-height: 1.3; }
+        .product-card h3 { font-size: 12px; margin: 4px 0; height: 30px; overflow: hidden; color: #222; line-height: 1.2; font-weight: 600; }
         
-        /* Prices Styling */
-        .price-container { margin-top: 5px; }
-        .reg-price { color: #888; text-decoration: line-through; font-size: 12px; margin-right: 5px; }
-        .sale-price { color: var(--primary); font-weight: 800; font-size: 16px; }
+        .price-container { margin-top: 3px; }
+        .reg-price { color: #888; text-decoration: line-through; font-size: 11px; margin-right: 4px; }
+        /* প্রাইস টেক্সট গাড় নীল */
+        .sale-price { color: var(--primary); font-weight: 800; font-size: 15px; }
 
-        .desc-btn { background: #f0f2f5; color: #555; border: none; padding: 6px; border-radius: 8px; font-size: 11px; margin-top: 8px; cursor: pointer; width: 100%; }
+        /* বিবরণ বাটন গাড় নীল টেক্সট */
+        .desc-btn { background: #eaeffa; color: var(--primary); border: none; padding: 5px; border-radius: 6px; font-size: 10px; margin-top: 6px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        .buy-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 10px; margin-top: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        /* বাই বাটন গাড় নীল ব্যাকগ্রাউন্ড */
+        .buy-btn { background: var(--primary); color: white; border: none; padding: 8px; border-radius: 8px; margin-top: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .buy-btn:active { transform: scale(0.95); }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 100; }
-        .nav-item { text-align: center; color: #a0a0a0; font-size: 11px; text-decoration: none; }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        /* বটম নেভিগেশন গাড় নীল আইকন */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 15px; border-top-right-radius: 15px; z-index: 100; }
+        .nav-item { text-align: center; color: #a0a0a0; font-size: 10px; text-decoration: none; transition: 0.3s; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
     </style>
 
@@ -83,7 +95,7 @@
                                     <span class="reg-price">৳${p.regPrice || ''}</span>
                                     <span class="sale-price">৳${p.salePrice}</span>
                                 </div>
-                                <button class="desc-btn" onclick="showDesc('${p.description || 'কোনো বিবরণ নেই'}')">পণ্য বিবরণ দেখুন</button>
+                                <button class="desc-btn" onclick="showDesc('${p.description || 'কোনো বিবরণ নেই'}')">বিবরণ দেখুন</button>
                                 <button class="buy-btn" onclick="orderNow('${p.name}', '${p.salePrice}')">এখনই কিনুন</button>
                             </div>`;
                     });
@@ -116,15 +128,22 @@
 <body onload="loadProducts()">
 
     <div class="header">
-        <span class="brand-name">SmartBD</span>
+        <span class="brand-name">BUY BD</span>
         <div class="search-container">
             <i class="fa fa-search"></i>
-            <input type="text" placeholder="পছন্দের পণ্যটি এখানে খুঁজুন...">
+            <input type="text" placeholder="আপনার পছন্দের পণ্যটি এখানে খুঁজুন...">
         </div>
     </div>
 
     <div class="banner">
         <img src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg" alt="Welcome Offer">
+    </div>
+
+    <div class="categories">
+        <div class="cat-item"><div class="cat-icon active"><i class="fa fa-th-large"></i></div>All</div>
+        <div class="cat-item"><div class="cat-icon"><i class="fa fa-tshirt"></i></div>Fashion</div>
+        <div class="cat-item"><div class="cat-icon"><i class="fa fa-football-ball"></i></div>Sports</div>
+        <div class="cat-item"><div class="cat-icon"><i class="fa fa-snowflake"></i></div>Winter</div>
     </div>
 
     <div class="section-title">ALL PRODUCTS</div>
