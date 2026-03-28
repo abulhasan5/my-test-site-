@@ -94,14 +94,29 @@
                                 <div class="price-container">
                                     <span class="reg-price">৳${p.regPrice || ''}</span>
                                     <span class="sale-price">৳${p.salePrice}</span>
-                                </div>
-                                <button class="desc-btn" onclick="showDesc('${p.description || 'কোনো বিবরণ নেই'}')">বিবরণ দেখুন</button>
-                                <button class="buy-btn" onclick="orderNow('${p.name}', '${p.salePrice}')">এখনই কিনুন</button>
-                            </div>`;
-                    });
+                                };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        database.ref('settings/banner').on('value', (snapshot) => {
+            if(snapshot.exists()) {
+                const bannerImg = document.getElementById('mainBanner');
+                if(bannerImg) {
+                    bannerImg.src = snapshot.val();
                 }
-            });
-        }
+            }
+        });
+
+        function loadProducts() {
+            database.ref('products').on('value', (snapshot) => {
+                                
+                                
+                            
+                    
+                
+            
+        
 
         function showDesc(desc) {
             alert("পণ্যের বিবরণ:\n" + desc);
