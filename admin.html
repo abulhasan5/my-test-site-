@@ -111,74 +111,95 @@
     <button class="btn" onclick="uploadSlider()">ব্যানার আপলোড করুন</button>
     <div id="sliderList" style="margin-top:20px;"></div>
 </div>
-    <script>
-        const config = {
-            apiKey: "AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
-            authDomain: "stepupbd-211d1.firebaseapp.com",
-            projectId: "stepupbd-211d1",
-            storageBucket: "stepupbd-211d1.appspot.com",
-            databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
-        };
-        firebase.initializeApp(config);
-        const db = firebase.database();
-        const st = firebase.storage();
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
-            document.getElementById(id).classList.add('active-section');
-            window.scrollTo(0, document.body.scrollHeight);
-        }
+<script>
+// ১. ফায়ারবেস কনফিগারেশন
+const config = {
+    apiKey: "AIzaSyD23rPr72npvtYsZBkoK4uvsh8VneLg",
+    authDomain: "stepupbd-211d1.firebaseapp.com",
+    projectId: "stepupbd-211d1",
+    storageBucket: "stepupbd-211d1.appspot.com",
+    databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(config);
+const db = firebase.database();
+const st = firebase.storage();
 
-        // Stats & Data
-        db.ref('products').on('value', snap => {
-            document.getElementById('pCount').innerText = snap.numChildren();
-            const list = document.getElementById('productList');
-            list.innerHTML = "";
-            snap.forEach(child => {
-                list.innerHTML += `<div class="list-item"><span>${child.val().name}</span> <i class="fa fa-trash delete-btn" onclick="del('products/${child.key}')"></i></div>`;
-            });
-        });
-
-        db.ref('orders').on('value', snap => {
-            document.getElementById('oCount').innerText = snap.numChildren();
-            const list = document.getElementById('orderList');
-            list.innerHTML = "";
-            snap.forEach(child => {
-                const o = child.val();
-                list.innerHTML += `<div class="list-item"><div><b>${o.product}</b><br><small>${o.customer} - ${o.phone}</small></div> <i class="fa fa-check" style="color:green"></i></div>`;
-            });
-        });
-
-        async function upload() {
-            const f = document.getElementById('file').files[0];
-            const n = document.getElementById('name').value;
-            const p = document.getElementById('price').value;
-            if(!f || !n || !p) return alert("সব পূরণ করুন!");
-            document.getElementById('upMsg').innerText = "আপলোড হচ্ছে...";
-            const ref = st.ref('p/' + Date.now());
-            await ref.put(f);
-            const url = await ref.getDownloadURL();
-            await db.ref('products').push({name:n, price:p, img:url});
-            alert("সফল!"); location.reload();
-        }
-
-        function del(path) { if(confirm("ডিলিট করবেন?")) db.ref(path).remove(); }async function uploadSlider() {
-    const f = document.getElementById('sFile').files[0];
-    if(!f) return alert("ছবি সিলেক্ট করুন!");
-    const ref = st.ref('sliders/' + Date.now());
-    await ref.put(f);
-    const url = await ref.getDownloadURL();
-    await db.ref('sliders').push({img: url});
-    alert("ব্যানার যোগ হয়েছে!"); location.reload();
+// ২. মেনু এবং সেকশন কন্ট্রোল
+function toggleMenu() {
+    var menu = document.getElementById('sideMenu');
+    if (menu.style.left === '0px') {
+        menu.style.left = '-250px';
+    } else {
+        menu.style.left = '0px';
+    }
 }
 
-db.ref('sliders').on('value', snap => {
-    const list = document.getElementById('sliderList');
-    list.innerHTML = "<b>বর্তমান ব্যানার:</b>";
-    snap.forEach(child => {
-        list.innerHTML += `<div class="list-item"><img src="${child.val().img}" width="60" height="35" style="border-radius:5px"> <i class="fa fa-trash delete-btn" onclick="del('sliders/${child.key}')"></i></div>`;
-    });
+function showSection(id) {
+    var sections = document.querySelectorAll('.section');
+    sections.forEach(s => s.classList.remove('active-section'));
+    var target = document.getElementById(id);
+    if(target) target.classList.add('active-section');
+    window.scrollTo(0,0);
+}
+
+// ৩. ডাটা লোড করা (পণ্য এবং অর্ডার)
+db.ref("products").on("value", snap => {
+    document.getElementById('pCount').innerText = snap.numChildren();
+    const list = document.getElementById('productList');
+    if(list) {
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const p = child.val();
+            list.innerHTML += `<div class="list-item"><span>${p.name}</span> <i class="fa fa-trash" style="color:red; cursor:pointer;" onclick="del('products/${child.key}')"></i></div>`;
+        });
+    }
 });
-    </script>
+
+db.ref("orders").on("value", snap => {
+    document.getElementById('oCount').innerText = snap.numChildren();
+    const list = document.getElementById('orderList');
+    if(list) {
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const o = child.val();
+            list.innerHTML += `<div class="list-item"><b>${o.product || 'Order'}</b><br><small>${o.customer || 'Guest'}</small></div>`;
+        });
+    }
+});
+
+// ৪. পণ্য আপলোড ফাংশন
+async function upload() {
+    const file = document.getElementById('file').files[0];
+    const name = document.getElementById('name').value;
+    const price = document.getElementById('price').value;
+    const msg = document.getElementById('upMsg');
+
+    if(!file || !name || !price) return alert("সব তথ্য পূরণ করুন!");
+
+    msg.innerText = "আপলোড হচ্ছে...";
+    try {
+        const ref = st.ref("p/" + Date.now());
+        await ref.put(file);
+        const url = await ref.getDownloadURL();
+        await db.ref("products").push({ name: name, price: price, img: url });
+        alert("সফলভাবে আপলোড হয়েছে!");
+        location.reload();
+    } catch(e) {
+        alert("ভুল হয়েছে: " + e.message);
+        msg.innerText = "";
+    }
+}
+
+// ৫. ডাটা ডিলিট ফাংশন
+function del(path) {
+    if(confirm("ডিলিট করতে চান?")) {
+        db.ref(path).remove().then(() => alert("ডিলিট সফল!"));
+    }
+}
+</script>
 </body>
 </html>
