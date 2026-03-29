@@ -1,215 +1,177 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SMART BD | E-commerce</title>
-
+<title>SMART BD</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script><style>
+:root{
+ --primary:#0d47a1;
+ --bg:#f4f6fb;
+}
+body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom:80px;}
 
-<style>
-:root { --primary:#0d47a1; --bg:#f8f9fa; --red:#d32f2f; --green:#2e7d32; }
-body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom:80px}
+.header{
+ background:linear-gradient(135deg,#1565c0,#0d47a1);
+ padding:20px;color:#fff;
+ border-bottom-left-radius:25px;
+ border-bottom-right-radius:25px;
+}
+.brand{font-size:26px;font-weight:bold;margin-bottom:10px;}
+.search-box{
+ width:100%;padding:12px;border:none;border-radius:25px;
+}
 
-.header{background:var(--primary);padding:15px;border-radius:0 0 20px 20px}
-.brand-name{color:#fff;font-size:24px;font-weight:bold}
+.banner img{width:100%;border-radius:20px;margin:15px 0;}
 
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
-.product-card{background:#fff;padding:8px;border-radius:12px}
-.product-card img{width:100%;height:120px;object-fit:cover;border-radius:10px}
+.categories{display:flex;justify-content:space-around;margin:10px 0;}
+.cat{text-align:center;font-size:12px;}
+.cat div{
+ width:60px;height:60px;background:#fff;border-radius:15px;
+ display:flex;align-items:center;justify-content:center;
+ box-shadow:0 4px 10px rgba(0,0,0,0.1);
+ margin:auto;
+}
+.cat.active div{background:var(--primary);color:#fff;}
 
-.buy-btn{background:var(--primary);color:#fff;border:none;padding:8px;border-radius:8px;width:100%;margin-top:5px}
+.section-title{margin:10px;font-weight:bold;}
 
-.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#fff}
-.nav-item{flex:1;text-align:center;padding:10px}
-.nav-item.active{color:var(--primary);font-weight:bold}
-</style>
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px;}
+.card{
+ background:#fff;border-radius:20px;padding:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.08);
+ position:relative;
+}
+.card img{width:100%;height:140px;border-radius:15px;object-fit:cover;}
+.price{color:var(--primary);font-weight:bold;}
+.btn{
+ background:var(--primary);color:#fff;border:none;padding:10px;
+ width:100%;border-radius:10px;margin-top:5px;
+}
 
-<script>
-const firebaseConfig = {
-apiKey:"AIzaSy...",
-databaseURL:"https://stepupbd-211d1-default-rtdb.firebaseio.com"
+.bottom{
+ position:fixed;bottom:0;width:100%;background:#fff;
+ display:flex;justify-content:space-around;padding:10px;
+ border-top-left-radius:20px;border-top-right-radius:20px;
+ box-shadow:0 -5px 15px rgba(0,0,0,0.1);
+}
+.nav{text-align:center;color:#888;font-size:12px;}
+.nav.active{color:var(--primary);}
+
+.input{
+ width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin:5px 0;
+}
+</style><script>
+const firebaseConfig={
+ apiKey:"AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
+ databaseURL:"https://stepupbd-211d1-default-rtdb.firebaseio.com"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
+let products=[];
 let cart=[];
 
-// section
-function showSection(id,el){
-document.querySelectorAll('.content-section').forEach(s=>s.style.display='none');
-document.getElementById(id).style.display='block';
-document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-el.classList.add('active');
+function load(){
+ db.ref('products').once('value',snap=>{
+  products=[];
+  snap.forEach(c=>products.push(c.val()));
+  show(products);
+ });
 }
 
-// load product (FIXED)
-function loadProducts(){
-db.ref('products').once('value').then(snap=>{
-let grid=document.getElementById('productGrid');
-grid.innerHTML="";
-
-snap.forEach(c=>{
-let p=c.val();
-
-grid.innerHTML+=`
-<div class="product-card">
-<img src="${p.img || p.image}">
-<h4>${p.name}</h4>
-<p>৳${p.salePrice}</p>
-
-<button class="buy-btn" onclick="addToCart(this)"
-data-name="${p.name}"
-data-price="${p.salePrice}"
-data-img="${p.img || p.image}">
-🛒 Add to Cart
-</button>
-
-<button class="buy-btn" onclick="orderNow(this)"
-data-name="${p.name}"
-data-price="${p.salePrice}">
-⚡ Order Now
-</button>
-
-</div>`;
-});
-});
+function show(list){
+ let html="";
+ list.forEach(p=>{
+  html+=`<div class='card'>
+   <img src='${p.img||p.image}'>
+   <h4>${p.name}</h4>
+   <div class='price'>৳${p.salePrice}</div>
+   <button class='btn' onclick="addCart('${p.name}','${p.salePrice}')">Add to Cart</button>
+   <button class='btn' onclick="buyNow('${p.name}','${p.salePrice}')">Order Now</button>
+  </div>`;
+ });
+ document.getElementById('grid').innerHTML=html;
 }
 
-// CART
-function addToCart(btn){
-cart.push({
-name:btn.dataset.name,
-price:btn.dataset.price
-});
-alert("কার্টে যোগ হয়েছে 🛒");
-renderCart();
+function search(){
+ let v=document.getElementById('search').value.toLowerCase();
+ let f=products.filter(p=>p.name.toLowerCase().includes(v));
+ show(f);
+}
+
+function filter(cat){
+ if(cat==='all') return show(products);
+ let f=products.filter(p=>p.category===cat);
+ show(f);
+}
+
+function addCart(n,p){
+ cart.push({n,p});
+ renderCart();
 }
 
 function renderCart(){
-let sec=document.getElementById('cartSection');
-
-if(cart.length==0){
-sec.innerHTML="<p>কার্ট খালি</p>";
-return;
+ let html="";
+ cart.forEach(i=>{
+  html+=`<div class='card'><b>${i.n}</b><br>৳${i.p}</div>`;
+ });
+ document.getElementById('cartList').innerHTML=html || 'কার্ট খালি';
 }
 
-let html="<h3>MY CART</h3>";
-
-cart.forEach((c,i)=>{
-html+=`${c.name} - ৳${c.price}
-<button onclick="removeCart(${i})">❌</button><br>`;
-});
-
-html+=`<button onclick="checkout()">Checkout</button>`;
-sec.innerHTML=html;
+function buyNow(name,price){
+ let n=prompt('নাম');
+ let ph=prompt('ফোন');
+ let ad=prompt('ঠিকানা');
+ if(n && ph && ad){
+  db.ref('orders').push({name,price,customer:n,phone:ph,address:ad,status:'Pending'});
+  alert('অর্ডার সফল');
+ }
 }
 
-function removeCart(i){
-cart.splice(i,1);
-renderCart();
+function track(){
+ let ph=document.getElementById('trackPhone').value;
+ let out='';
+ db.ref('orders').once('value',snap=>{
+  snap.forEach(c=>{
+   let o=c.val();
+   if(o.phone==ph){
+    out+=`<div class='card'>${o.name}<br>Status: ${o.status}</div>`;
+   }
+  });
+  document.getElementById('trackRes').innerHTML=out||'কিছু পাওয়া যায়নি';
+ });
 }
 
-// PAYMENT + ORDER
-function checkout(){
-
-alert("💳 Payment করুন:\nbKash: 01XXXXXXXXX\nNagad: 01XXXXXXXXX");
-
-let n=prompt("নাম");
-let p=prompt("ফোন");
-let a=prompt("ঠিকানা");
-let trx=prompt("Transaction ID");
-
-cart.forEach(c=>{
-db.ref('orders').push({
-product:c.name,
-price:c.price,
-customer:n,
-phone:p,
-address:a,
-trx:trx,
-status:"Paid",
-time:Date.now()
-});
-});
-
-alert("অর্ডার সম্পন্ন ✅");
-cart=[];
-renderCart();
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+ document.getElementById(id).style.display='block';
 }
-
-// direct order
-function orderNow(btn){
-
-alert("💳 Payment করুন:\nbKash: 01XXXXXXXXX");
-
-let n=prompt("নাম");
-let p=prompt("ফোন");
-let a=prompt("ঠিকানা");
-let trx=prompt("Transaction ID");
-
-db.ref('orders').push({
-product:btn.dataset.name,
-price:btn.dataset.price,
-customer:n,
-phone:p,
-address:a,
-trx:trx,
-status:"Paid"
-});
-
-alert("অর্ডার সফল ✅");
-}
-
-// TRACK
-function trackOrder(){
-let phone=document.getElementById('phoneInput').value;
-let res=document.getElementById('trackResult');
-
-db.ref('orders').once('value').then(snap=>{
-res.innerHTML="";
-snap.forEach(c=>{
-let o=c.val();
-if(o.phone==phone){
-res.innerHTML+=`<p>${o.product} - ${o.status}</p>`;
-}
-});
-});
-}
-
-// FIX LOAD
-window.addEventListener("load", loadProducts);
-</script>
-
-</head>
-
-<body>
-
-<div class="header">
-<span class="brand-name">SMART BD</span>
-</div>
-
-<div id="homeSection" class="content-section">
-<div id="productGrid" class="grid"></div>
-</div>
-
-<div id="cartSection" class="content-section" style="display:none"></div>
-
-<div id="orderSection" class="content-section" style="display:none">
-<input id="phoneInput" placeholder="ফোন">
-<button onclick="trackOrder()">Track</button>
-<div id="trackResult"></div>
-</div>
-
-<div class="bottom-nav">
-<div class="nav-item active" onclick="showSection('homeSection',this)">Home</div>
-<div class="nav-item" onclick="showSection('cartSection',this)">Cart</div>
-<div class="nav-item" onclick="showSection('orderSection',this)">Orders</div>
-</div>
-
-</body>
+</script></head><body onload="load()"><div class="header">
+ <div class="brand">SMART BD</div>
+ <input id="search" onkeyup="search()" class="search-box" placeholder="পণ্য খুঁজুন...">
+</div><div id="home" class="page">
+ <div class="banner">
+  <img src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg">
+ </div> <div class="categories">
+  <div class="cat active" onclick="filter('all')"><div><i class="fa fa-th"></i></div>All</div>
+  <div class="cat" onclick="filter('Fashion')"><div><i class="fa fa-tshirt"></i></div>Fashion</div>
+  <div class="cat" onclick="filter('Sports')"><div><i class="fa fa-football"></i></div>Sports</div>
+  <div class="cat" onclick="filter('Winter')"><div><i class="fa fa-snowflake"></i></div>Winter</div>
+ </div> <div class="section-title">ALL PRODUCTS</div>
+ <div id="grid" class="grid"></div>
+</div><div id="cart" class="page" style="display:none">
+ <h3 style="text-align:center">My Cart</h3>
+ <div id="cartList"></div>
+</div><div id="orders" class="page" style="display:none">
+ <h3 style="text-align:center">Track Order</h3>
+ <input id="trackPhone" class="input" placeholder="ফোন নাম্বার">
+ <button class="btn" onclick="track()">Track</button>
+ <div id="trackRes"></div>
+</div><div class="bottom">
+ <div class="nav active" onclick="showPage('home')"><i class="fa fa-home"></i><br>Home</div>
+ <div class="nav" onclick="showPage('cart')"><i class="fa fa-shopping-cart"></i><br>Cart</div>
+ <div class="nav" onclick="showPage('orders')"><i class="fa fa-truck"></i><br>Orders</div>
+</div></body>
 </html>
