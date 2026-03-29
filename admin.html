@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMART BD Admin | Fixed Version</title>
+    <title>SMART BD Admin | Advanced Store Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0d47a1; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; --orange: #ef6c00; --blue: #1976d2; --purple: #7b1fa2; }
@@ -11,54 +11,89 @@
         .header { background: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
         .card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
-        .total-card { grid-column: span 2; background: var(--primary); color: white; border: none; padding: 25px; }
+        .total-card { grid-column: span 2; background: var(--primary); color: white; border: none; }
         .section { display: none; padding: 20px; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .active { display: block; }
+        .active { display: block; animation: fadeIn 0.3s; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        .btn { background: var(--primary); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* স্ট্যাটাস বাটন ও ইমেজ ফিক্স */
+        /* স্ট্যাটাস ব্যাজ ডিজাইন */
         .status-badge { padding: 4px 10px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; display: inline-block; margin-bottom: 8px; text-transform: uppercase; }
         .pending { background: var(--orange); }
         .booking { background: var(--purple); }
         .processing { background: var(--blue); }
         .delivered { background: var(--green); }
         
-        .p-img { width: 55px; height: 55px; object-fit: cover; border-radius: 10px; background: #f0f0f0; margin-right: 12px; border: 1px solid #eee; }
-        .list-item { background: #fff; border: 1px solid #f0f0f0; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-        .order-box { background: #f8f9fa; padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid var(--orange); }
-        .btn-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-        .s-btn { border: none; padding: 6px 10px; border-radius: 6px; color: white; font-size: 10px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        #imgPreview { width: 100%; height: 120px; object-fit: contain; border-radius: 10px; margin-bottom: 10px; display: none; border: 1px solid #eee; }
+        #sideMenu { position: fixed; left: -260px; width: 260px; height: 100%; background: white; transition: 0.3s; z-index: 1000; box-shadow: 2px 0 15px rgba(0,0,0,0.1); top: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+        .menu-btn { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; cursor: pointer; border: 1px solid #eee; }
+        
+        /* প্রোডাক্ট লিস্টে পিকচার দেখানোর জন্য নতুন সিএসএস */
+        .p-img-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 10px; background: #eee; }
+        .product-info-box { display: flex; align-items: center; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <i class="fa fa-bars" style="font-size: 20px; color: var(--primary); margin-right: 15px;"></i>
-    <b style="color: var(--primary); font-size: 18px;">SMART BD Admin</b>
+    <i class="fa fa-bars" onclick="toggleMenu()" style="font-size: 22px; color: var(--primary); margin-right: 15px; cursor: pointer;"></i>
+    <div><b style="color: var(--primary);">SMART BD Admin</b></div>
+</div>
+
+<div id="sideMenu">
+    <div style="padding: 30px 25px; background: var(--primary); color: white; font-size: 18px;"><b>Admin Menu</b></div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('upSec')">Add Product</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('orderSec')">Orders</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="location.reload()">Refresh</div>
 </div>
 
 <div class="stats">
-    <div class="card total-card"><small>Total Delivered Sales</small><h2 id="totalSales">৳ 0</h2></div>
-    <div class="card"><h2 id="pCount">0</h2><small>পণ্য</small></div>
-    <div class="card"><h2 id="oCount">0</h2><small>অর্ডার</small></div>
+    <div class="card total-card">
+        <small>মোট সফল বিক্রয় (Delivered)</small>
+        <h2 id="totalSales">৳ 0</h2>
+    </div>
+    <div class="card"><i class="fa fa-box"></i><h2 id="pCount">0</h2><small>পণ্য</small></div>
+    <div class="card"><i class="fa fa-receipt"></i><h2 id="oCount">0</h2><small>অর্ডার</small></div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px;">
-    <div onclick="show('upSec')" style="background:white; padding:20px; border-radius:15px; text-align:center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-        <i class="fa fa-plus-circle" style="color:var(--primary); font-size:22px;"></i><br><small>Add Item</small>
-    </div>
-    <div onclick="show('orderSec')" style="background:white; padding:20px; border-radius:15px; text-align:center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-        <i class="fa fa-shopping-cart" style="color:var(--primary); font-size:22px;"></i><br><small>Orders</small>
-    </div>
+<div class="menu-grid">
+    <div class="menu-btn" onclick="show('upSec')"><i class="fa fa-plus-circle"></i><br>Add Item</div>
+    <div class="menu-btn" onclick="show('orderSec')"><i class="fa fa-shopping-cart"></i><br>Orders</div>
+    <div class="menu-btn" onclick="show('manageSec')"><i class="fa fa-tasks"></i><br>Manage</div>
+    <div class="menu-btn" onclick="show('sliderSec')"><i class="fa fa-images"></i><br>Slider</div>
+</div>
+
+<div id="upSec" class="section">
+    <h3 id="formTitle">পণ্য যোগ/এডিট</h3>
+    <img id="imgPreview" alt="Preview">
+    <input type="text" id="imgUrl" placeholder="ছবির লিঙ্ক দিন" oninput="previewImg(this.value)">
+    <input type="text" id="name" placeholder="পণ্যের নাম">
+    <input type="number" id="regPrice" placeholder="আসল দাম">
+    <input type="number" id="salePrice" placeholder="অফার দাম">
+    <textarea id="desc" placeholder="বিস্তারিত বিবরণ"></textarea>
+    <select id="stock">
+        <option value="In Stock">In Stock</option>
+        <option value="Out of Stock">Out of Stock</option>
+    </select>
+    <button id="submitBtn" class="btn" onclick="upload()">আপলোড করুন</button>
 </div>
 
 <div id="orderSec" class="section active">
-    <h3 style="margin-top:0;">অর্ডার রিকোয়েস্ট</h3>
+    <h3>অর্ডার ম্যানেজমেন্ট</h3>
     <div id="orderList">লোড হচ্ছে...</div>
 </div>
 
-<div id="manageSec" class="section active">
-    <h3 style="margin-top:0;">পণ্য ম্যানেজ করুন</h3>
+<div id="manageSec" class="section">
+    <h3>পণ্য ম্যানেজ করুন</h3>
     <div id="productList">লোড হচ্ছে...</div>
+</div>
+
+<div id="sliderSec" class="section">
+    <h3>স্লাইডার সেটআপ</h3>
+    <input type="text" id="bannerUrl" placeholder="ব্যানার লিঙ্ক">
+    <button class="btn" onclick="updateBanner()">আপডেট করুন</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -74,70 +109,131 @@
     };
     firebase.initializeApp(config);
     const db = firebase.database();
+    let currentEditKey = null;
+
+    function toggleMenu() {
+        var m = document.getElementById('sideMenu');
+        m.style.left = (m.style.left === '0px') ? '-260px' : '0px';
+    }
 
     function show(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        if(window.innerWidth < 768) document.getElementById('sideMenu').style.left = '-260px';
     }
 
-    // অর্ডার লিস্ট এবং স্ট্যাটাস ফিক্স
+    function previewImg(url) {
+        const preview = document.getElementById('imgPreview');
+        if(url) { preview.src = url; preview.style.display = 'block'; }
+        else { preview.style.display = 'none'; }
+    }
+
     db.ref("orders").on("value", snap => {
+        document.getElementById('oCount').innerText = snap.numChildren();
         const list = document.getElementById('orderList');
-        let total = 0;
-        list.innerHTML = "";
+        let sales = 0;
+        list.innerHTML = snap.exists() ? "" : "কোনো অর্ডার নেই।";
+        
         snap.forEach(child => {
             const o = child.val();
             const st = o.status || 'Pending';
-            if(st === 'Delivered') total += parseInt(o.price || 0);
+            if(st === 'Delivered') sales += parseInt(o.price || 0);
             
-            let bColor = 'var(--orange)';
-            if(st === 'Booking') bColor = 'var(--purple)';
-            if(st === 'Processing') bColor = 'var(--blue)';
-            if(st === 'Delivered') bColor = 'var(--green)';
+            let borderColor = 'var(--orange)';
+            if(st === 'Booking') borderColor = 'var(--purple)';
+            if(st === 'Processing') borderColor = 'var(--blue)';
+            if(st === 'Delivered') borderColor = 'var(--green)';
             
             list.innerHTML += `
-            <div class="order-box" style="border-left-color: ${bColor}">
+            <div style="background:#f1f3f4; padding:15px; margin-bottom:15px; border-radius:12px; border-left:6px solid ${borderColor};">
                 <span class="status-badge ${st.toLowerCase()}">${st}</span><br>
-                <b style="font-size:15px;">${o.product}</b><br>
-                <small>কাস্টমার: ${o.customer}</small>
-                <div class="btn-group">
-                    <button class="s-btn" onclick="updateSt('${child.key}', 'Pending')" style="background:var(--orange)">Pending</button>
-                    <button class="s-btn" onclick="updateSt('${child.key}', 'Booking')" style="background:var(--purple)">Booking</button>
-                    <button class="s-btn" onclick="updateSt('${child.key}', 'Processing')" style="background:var(--blue)">Processing</button>
-                    <button class="s-btn" onclick="updateSt('${child.key}', 'Delivered')" style="background:var(--green)">Delivered</button>
+                <b>পণ্য: ${o.product}</b> (৳${o.price})<br>
+                <hr style="border:0.1px solid #ccc; margin:10px 0;">
+                <b>কাস্টমার:</b> ${o.customer} | <b>ফোন:</b> <a href="tel:${o.phone}">${o.phone}</a><br>
+                <b>ঠিকানা:</b> ${o.address}<br>
+                <div style="margin-top:12px; display: flex; flex-wrap: wrap; gap: 5px;">
+                    <button onclick="updateStatus('${child.key}', 'Pending')" style="background:var(--orange); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Pending</button>
+                    <button onclick="updateStatus('${child.key}', 'Booking')" style="background:var(--purple); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Booking</button>
+                    <button onclick="updateStatus('${child.key}', 'Processing')" style="background:var(--blue); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Processing</button>
+                    <button onclick="updateStatus('${child.key}', 'Delivered')" style="background:var(--green); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Delivered</button>
+                    <button onclick="del('orders/${child.key}')" style="background:var(--red); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Delete</button>
                 </div>
             </div>`;
         });
-        document.getElementById('totalSales').innerText = "৳ " + total;
-        document.getElementById('oCount').innerText = snap.numChildren();
+        document.getElementById('totalSales').innerText = "৳ " + sales;
     });
 
-    function updateSt(key, status) {
-        db.ref("orders/" + key).update({ status: status });
+    function updateStatus(key, status) {
+        db.ref("orders/" + key).update({ status: status }).then(() => alert("স্ট্যাটাস আপডেট হয়েছে!"));
     }
 
-    // প্রোডাক্ট লিস্ট ও ইমেজ ডিসপ্লে ফিক্স
     db.ref("products").on("value", snap => {
+        document.getElementById('pCount').innerText = snap.numChildren();
         const list = document.getElementById('productList');
-        list.innerHTML = "";
+        list.innerHTML = snap.exists() ? "" : "কোনো পণ্য নেই।";
         snap.forEach(child => {
             const p = child.val();
-            // ডাটাবেসে img অথবা image যে নামেই থাকুক ছবি দেখাবে
-            const imgSource = p.img || p.image || p.imgUrl || "";
+            // পিকচার দেখার জন্য ইমেজের সোর্স চেক করা হচ্ছে
+            const imgSrc = p.img || p.image || 'https://via.placeholder.com/50';
             
-            list.innerHTML += `
-            <div class="list-item">
-                <div style="display:flex; align-items:center;">
-                    <img src="${imgSource}" class="p-img" onerror="this.src='https://via.placeholder.com/60?text=No+Img'">
+            list.innerHTML += `<div style="background:#fff; border:1px solid #eee; margin-bottom:8px; padding:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div class="product-info-box">
+                    <img src="${imgSrc}" class="p-img-thumb" onerror="this.src='https://via.placeholder.com/50'">
                     <div><b>${p.name}</b><br><small>${p.salePrice}৳</small></div>
                 </div>
-                <i class="fa fa-trash" style="color:var(--red); padding:10px;" onclick="del('products/${child.key}')"></i>
+                <div><i class="fa fa-edit" style="color:blue; cursor:pointer; padding:10px;" onclick="editProduct('${child.key}')"></i>
+                <i class="fa fa-trash" style="color:red; cursor:pointer; padding:10px;" onclick="del('products/${child.key}')"></i></div>
             </div>`;
         });
-        document.getElementById('pCount').innerText = snap.numChildren();
     });
 
-    function del(path) { if(confirm("Are you sure?")) db.ref(path).remove(); }
+    function editProduct(key) {
+        db.ref("products/" + key).once("value", snap => {
+            const p = snap.val();
+            currentEditKey = key;
+            show('upSec');
+            document.getElementById('formTitle').innerText = "Update Product";
+            document.getElementById('imgUrl').value = p.img || p.image || "";
+            previewImg(p.img || p.image);
+            document.getElementById('name').value = p.name || "";
+            document.getElementById('regPrice').value = p.regPrice || "";
+            document.getElementById('salePrice').value = p.salePrice || "";
+            document.getElementById('desc').value = p.desc || "";
+            document.getElementById('stock').value = p.stockStatus || "In Stock";
+            document.getElementById('submitBtn').innerText = "Update Now";
+            document.getElementById('submitBtn').onclick = saveUpdate;
+        });
+    }
+
+    function saveUpdate() {
+        const data = {
+            img: document.getElementById('imgUrl').value,
+            name: document.getElementById('name').value,
+            regPrice: document.getElementById('regPrice').value,
+            salePrice: document.getElementById('salePrice').value,
+            desc: document.getElementById('desc').value,
+            stockStatus: document.getElementById('stock').value,
+            time: Date.now()
+        };
+        db.ref("products/" + currentEditKey).update(data).then(() => { alert("আপডেট সফল!"); location.reload(); });
+    }
+
+    function upload() {
+        const data = {
+            img: document.getElementById('imgUrl').value,
+            name: document.getElementById('name').value,
+            regPrice: document.getElementById('regPrice').value,
+            salePrice: document.getElementById('salePrice').value,
+            desc: document.getElementById('desc').value,
+            stockStatus: document.getElementById('stock').value,
+            time: Date.now()
+        };
+        if(!data.name || !data.salePrice) return alert("তথ্য দিন!");
+        db.ref("products").push(data).then(() => { alert("পণ্য যোগ হয়েছে!"); location.reload(); });
+    }
+
+    function del(path) { if(confirm("নিশ্চিত?")) db.ref(path).remove().then(() => alert("ডিলিট হয়েছে!")); }
+    function updateBanner() { db.ref("settings/banner").set(document.getElementById('bannerUrl').value).then(() => alert("ব্যানার আপডেট হয়েছে!")); }
 </script>
 </body>
 </html>
