@@ -5,173 +5,120 @@
 <title>SMART BD</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script><style>
-:root{
- --primary:#0d47a1;
- --bg:#f4f6fb;
-}
-body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom:80px;}
+:root{--primary:#1565c0;--bg:#f4f6fb;}
+body{margin:0;font-family:sans-serif;background:var(--bg);}
 
 .header{
- background:linear-gradient(135deg,#1565c0,#0d47a1);
+ background:linear-gradient(135deg,#1e88e5,#1565c0);
  padding:20px;color:#fff;
- border-bottom-left-radius:25px;
- border-bottom-right-radius:25px;
+ display:flex;justify-content:space-between;align-items:center;
 }
-.brand{font-size:26px;font-weight:bold;margin-bottom:10px;}
-.search-box{
- width:100%;padding:12px;border:none;border-radius:25px;
+.brand{font-size:22px;font-weight:bold;}
+
+.banner img{width:100%;border-radius:15px;margin:10px 0;}
+
+.section{padding:10px;}
+
+.social{
+ display:flex;justify-content:space-around;background:#fff;
+ padding:15px;border-radius:15px;
+}
+.social i{font-size:30px;}
+
+.notice{
+ margin-top:10px;
+ padding:20px;color:#fff;border-radius:15px;
+ background:linear-gradient(135deg,#1e88e5,#5e35b1);
 }
 
-.banner img{width:100%;border-radius:20px;margin:15px 0;}
-
-.categories{display:flex;justify-content:space-around;margin:10px 0;}
-.cat{text-align:center;font-size:12px;}
-.cat div{
- width:60px;height:60px;background:#fff;border-radius:15px;
- display:flex;align-items:center;justify-content:center;
- box-shadow:0 4px 10px rgba(0,0,0,0.1);
- margin:auto;
+.grid{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:10px;margin-top:10px;
 }
-.cat.active div{background:var(--primary);color:#fff;}
-
-.section-title{margin:10px;font-weight:bold;}
-
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px;}
-.card{
- background:#fff;border-radius:20px;padding:10px;
- box-shadow:0 4px 10px rgba(0,0,0,0.08);
- position:relative;
+.box{
+ background:#fff;border-radius:15px;padding:10px;text-align:center;
+ box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
-.card img{width:100%;height:140px;border-radius:15px;object-fit:cover;}
-.price{color:var(--primary);font-weight:bold;}
-.btn{
- background:var(--primary);color:#fff;border:none;padding:10px;
- width:100%;border-radius:10px;margin-top:5px;
-}
+.box i{font-size:24px;color:var(--primary);}
 
 .bottom{
  position:fixed;bottom:0;width:100%;background:#fff;
  display:flex;justify-content:space-around;padding:10px;
- border-top-left-radius:20px;border-top-right-radius:20px;
- box-shadow:0 -5px 15px rgba(0,0,0,0.1);
+ box-shadow:0 -5px 10px rgba(0,0,0,0.1);
 }
-.nav{text-align:center;color:#888;font-size:12px;}
+.nav{text-align:center;color:#777;}
 .nav.active{color:var(--primary);}
 
-.input{
- width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin:5px 0;
+.login{
+ display:flex;flex-direction:column;gap:10px;padding:20px;
 }
+.input{padding:10px;border-radius:10px;border:1px solid #ccc;}
+.btn{padding:10px;border:none;border-radius:10px;background:var(--primary);color:#fff;}
 </style><script>
 const firebaseConfig={
  apiKey:"AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
+ authDomain:"stepupbd-211d1.firebaseapp.com",
  databaseURL:"https://stepupbd-211d1-default-rtdb.firebaseio.com"
 };
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
+const auth=firebase.auth();
 
-let products=[];
-let cart=[];
-
-function load(){
- db.ref('products').once('value',snap=>{
-  products=[];
-  snap.forEach(c=>products.push(c.val()));
-  show(products);
- });
+function login(){
+ let email=document.getElementById('email').value;
+ let pass=document.getElementById('pass').value;
+ auth.signInWithEmailAndPassword(email,pass)
+ .then(()=>{
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('homePage').style.display='block';
+ })
+ .catch(()=>alert('ভুল লগইন'));
 }
 
-function show(list){
- let html="";
- list.forEach(p=>{
-  html+=`<div class='card'>
-   <img src='${p.img||p.image}'>
-   <h4>${p.name}</h4>
-   <div class='price'>৳${p.salePrice}</div>
-   <button class='btn' onclick="addCart('${p.name}','${p.salePrice}')">Add to Cart</button>
-   <button class='btn' onclick="buyNow('${p.name}','${p.salePrice}')">Order Now</button>
-  </div>`;
- });
- document.getElementById('grid').innerHTML=html;
+function register(){
+ let email=document.getElementById('email').value;
+ let pass=document.getElementById('pass').value;
+ auth.createUserWithEmailAndPassword(email,pass)
+ .then(()=>alert('রেজিস্টার সফল'));
 }
-
-function search(){
- let v=document.getElementById('search').value.toLowerCase();
- let f=products.filter(p=>p.name.toLowerCase().includes(v));
- show(f);
-}
-
-function filter(cat){
- if(cat==='all') return show(products);
- let f=products.filter(p=>p.category===cat);
- show(f);
-}
-
-function addCart(n,p){
- cart.push({n,p});
- renderCart();
-}
-
-function renderCart(){
- let html="";
- cart.forEach(i=>{
-  html+=`<div class='card'><b>${i.n}</b><br>৳${i.p}</div>`;
- });
- document.getElementById('cartList').innerHTML=html || 'কার্ট খালি';
-}
-
-function buyNow(name,price){
- let n=prompt('নাম');
- let ph=prompt('ফোন');
- let ad=prompt('ঠিকানা');
- if(n && ph && ad){
-  db.ref('orders').push({name,price,customer:n,phone:ph,address:ad,status:'Pending'});
-  alert('অর্ডার সফল');
- }
-}
-
-function track(){
- let ph=document.getElementById('trackPhone').value;
- let out='';
- db.ref('orders').once('value',snap=>{
-  snap.forEach(c=>{
-   let o=c.val();
-   if(o.phone==ph){
-    out+=`<div class='card'>${o.name}<br>Status: ${o.status}</div>`;
-   }
-  });
-  document.getElementById('trackRes').innerHTML=out||'কিছু পাওয়া যায়নি';
- });
-}
-
-function showPage(id){
- document.querySelectorAll('.page').forEach(p=>p.style.display='none');
- document.getElementById(id).style.display='block';
-}
-</script></head><body onload="load()"><div class="header">
- <div class="brand">SMART BD</div>
- <input id="search" onkeyup="search()" class="search-box" placeholder="পণ্য খুঁজুন...">
-</div><div id="home" class="page">
- <div class="banner">
-  <img src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg">
- </div> <div class="categories">
-  <div class="cat active" onclick="filter('all')"><div><i class="fa fa-th"></i></div>All</div>
-  <div class="cat" onclick="filter('Fashion')"><div><i class="fa fa-tshirt"></i></div>Fashion</div>
-  <div class="cat" onclick="filter('Sports')"><div><i class="fa fa-football"></i></div>Sports</div>
-  <div class="cat" onclick="filter('Winter')"><div><i class="fa fa-snowflake"></i></div>Winter</div>
- </div> <div class="section-title">ALL PRODUCTS</div>
- <div id="grid" class="grid"></div>
-</div><div id="cart" class="page" style="display:none">
- <h3 style="text-align:center">My Cart</h3>
- <div id="cartList"></div>
-</div><div id="orders" class="page" style="display:none">
- <h3 style="text-align:center">Track Order</h3>
- <input id="trackPhone" class="input" placeholder="ফোন নাম্বার">
- <button class="btn" onclick="track()">Track</button>
- <div id="trackRes"></div>
-</div><div class="bottom">
- <div class="nav active" onclick="showPage('home')"><i class="fa fa-home"></i><br>Home</div>
- <div class="nav" onclick="showPage('cart')"><i class="fa fa-shopping-cart"></i><br>Cart</div>
- <div class="nav" onclick="showPage('orders')"><i class="fa fa-truck"></i><br>Orders</div>
+</script></head><body><!-- LOGIN --><div id="loginPage" class="login">
+ <h2>SMART BD লগইন</h2>
+ <input id="email" class="input" placeholder="Email">
+ <input id="pass" type="password" class="input" placeholder="Password">
+ <button class="btn" onclick="login()">লগইন</button>
+ <button class="btn" onclick="register()">রেজিস্টার</button>
+</div><!-- HOME --><div id="homePage" style="display:none">
+ <div class="header">
+  <i class="fa fa-bars"></i>
+  <div class="brand">SMART BD</div>
+  <i class="fa fa-shopping-cart"></i>
+ </div> <div class="section">
+  <div class="banner">
+   <img src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg">
+  </div>  <div class="social">
+   <i class="fab fa-facebook"></i>
+   <i class="fab fa-youtube"></i>
+   <i class="fab fa-whatsapp"></i>
+   <i class="fab fa-telegram"></i>
+  </div>  <div class="notice">
+   <h3>নোটিশ বোর্ড</h3>
+   <p>স্বাগতম SMART BD তে</p>
+  </div>  <div class="grid">
+   <div class="box"><i class="fa fa-shopping-cart"></i><br>প্রোডাক্ট</div>
+   <div class="box"><i class="fa fa-search"></i><br>সার্চ</div>
+   <div class="box"><i class="fa fa-crown"></i><br>প্রো</div>
+   <div class="box"><i class="fa fa-store"></i><br>ই-কমার্স</div>
+   <div class="box"><i class="fa fa-leaf"></i><br>প্যাসিভ</div>
+   <div class="box"><i class="fa fa-check"></i><br>ভেরিফাই</div>
+   <div class="box"><i class="fa fa-mobile"></i><br>রিচার্জ</div>
+   <div class="box"><i class="fa fa-headset"></i><br>সাপোর্ট</div>
+  </div>
+ </div> <div class="bottom">
+  <div class="nav active"><i class="fa fa-home"></i><br>হোম</div>
+  <div class="nav"><i class="fa fa-box"></i><br>প্রোডাক্ট</div>
+  <div class="nav"><i class="fa fa-chart-line"></i><br>প্রফিট</div>
+  <div class="nav"><i class="fa fa-user"></i><br>প্রোফাইল</div>
+ </div>
 </div></body>
 </html>
