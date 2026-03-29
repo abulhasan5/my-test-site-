@@ -3,91 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMART BD Admin | Manage Store</title>
+    <title>SMART BD Admin | Advanced Store Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* আপনার আগের সব ডিজাইন ও কালার ঠিক রাখা হয়েছে */
-        :root { --primary: #0d47a1; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; --orange: #ef6c00; }
+        :root { --primary: #0d47a1; --light-bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; --orange: #ef6c00; --blue: #1976d2; --purple: #7b1fa2; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light-bg); margin: 0; padding-bottom: 30px; }
         .header { background: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
         .card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
         .total-card { grid-column: span 2; background: var(--primary); color: white; border: none; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
-        .menu-btn { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; cursor: pointer; border: 1px solid #eee; transition: 0.2s; }
-        .menu-btn i { font-size: 28px; color: var(--primary); display: block; margin-bottom: 8px; }
         .section { display: none; padding: 20px; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .active { display: block; animation: fadeIn 0.3s; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .btn { background: var(--primary); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        /* নতুন স্ট্যাটাস ও ইমেজ প্রিভিউ ডিজাইন */
-        .status-badge { padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; color: white; display: inline-block; margin-bottom: 5px; }
+        .btn { background: var(--primary); color: white; padding: 15px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* স্ট্যাটাস ব্যাজ ডিজাইন */
+        .status-badge { padding: 4px 10px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; display: inline-block; margin-bottom: 8px; text-transform: uppercase; }
         .pending { background: var(--orange); }
+        .booking { background: var(--purple); }
+        .processing { background: var(--blue); }
         .delivered { background: var(--green); }
+        
         #imgPreview { width: 100%; height: 120px; object-fit: contain; border-radius: 10px; margin-bottom: 10px; display: none; border: 1px solid #eee; }
         #sideMenu { position: fixed; left: -260px; width: 260px; height: 100%; background: white; transition: 0.3s; z-index: 1000; box-shadow: 2px 0 15px rgba(0,0,0,0.1); top: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+        .menu-btn { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; cursor: pointer; border: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <i class="fa fa-bars" onclick="toggleMenu()" style="font-size: 22px; color: var(--primary); margin-right: 15px; cursor: pointer;"></i>
-    <div><b style="color: var(--primary);">SMART BD Admin</b><br><small>Manage store effectively</small></div>
+    <div><b style="color: var(--primary);">SMART BD Admin</b></div>
 </div>
 
 <div id="sideMenu">
     <div style="padding: 30px 25px; background: var(--primary); color: white; font-size: 18px;"><b>Admin Menu</b></div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('upSec')">নতুন পণ্য যোগ করুন</div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('orderSec')">অর্ডার রিকোয়েস্ট</div>
-    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="location.reload()">Refresh App</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('upSec')">Add Product</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="show('orderSec')">Orders</div>
+    <div style="padding: 15px 25px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="location.reload()">Refresh</div>
 </div>
 
 <div class="stats">
     <div class="card total-card">
-        <small>Total Delivered Sales</small>
+        <small>মোট সফল বিক্রয় (Delivered)</small>
         <h2 id="totalSales">৳ 0</h2>
     </div>
-    <div class="card"><i class="fa fa-box"></i><h2 id="pCount">0</h2><small>Products</small></div>
-    <div class="card"><i class="fa fa-receipt"></i><h2 id="oCount">0</h2><small>Orders</small></div>
+    <div class="card"><i class="fa fa-box"></i><h2 id="pCount">0</h2><small>পণ্য</small></div>
+    <div class="card"><i class="fa fa-receipt"></i><h2 id="oCount">0</h2><small>অর্ডার</small></div>
 </div>
 
 <div class="menu-grid">
-    <div class="menu-btn" onclick="show('upSec')"><i class="fa fa-plus-circle"></i><span>Add Product</span></div>
-    <div class="menu-btn" onclick="show('orderSec')"><i class="fa fa-shopping-cart"></i><span>Orders</span></div>
-    <div class="menu-btn" onclick="show('manageSec')"><i class="fa fa-tasks"></i><span>Manage Items</span></div>
-    <div class="menu-btn" onclick="show('sliderSec')"><i class="fa fa-images"></i><span>Slider Setup</span></div>
+    <div class="menu-btn" onclick="show('upSec')"><i class="fa fa-plus-circle"></i><br>Add Item</div>
+    <div class="menu-btn" onclick="show('orderSec')"><i class="fa fa-shopping-cart"></i><br>Orders</div>
+    <div class="menu-btn" onclick="show('manageSec')"><i class="fa fa-tasks"></i><br>Manage</div>
+    <div class="menu-btn" onclick="show('sliderSec')"><i class="fa fa-images"></i><br>Slider</div>
 </div>
 
 <div id="upSec" class="section">
-    <h3 id="formTitle" style="color:var(--primary); margin-top:0;">নতুন পণ্য যোগ করুন</h3>
+    <h3 id="formTitle">পণ্য যোগ/এডিট</h3>
     <img id="imgPreview" alt="Preview">
     <input type="text" id="imgUrl" placeholder="ছবির লিঙ্ক দিন" oninput="previewImg(this.value)">
     <input type="text" id="name" placeholder="পণ্যের নাম">
-    <input type="number" id="regPrice" placeholder="আসল দাম (কাটা যাবে)">
+    <input type="number" id="regPrice" placeholder="আসল দাম">
     <input type="number" id="salePrice" placeholder="অফার দাম">
-    <textarea id="desc" placeholder="পণ্যের বিবরণ"></textarea>
+    <textarea id="desc" placeholder="বিস্তারিত বিবরণ"></textarea>
     <select id="stock">
-        <option value="In Stock">স্টকে আছে</option>
-        <option value="Out of Stock">স্টক শেষ</option>
+        <option value="In Stock">In Stock</option>
+        <option value="Out of Stock">Out of Stock</option>
     </select>
     <button id="submitBtn" class="btn" onclick="upload()">আপলোড করুন</button>
 </div>
 
 <div id="orderSec" class="section active">
-    <h3>অর্ডার রিকোয়েস্ট</h3>
-    <div id="orderList">ডেটা লোড হচ্ছে...</div>
+    <h3>অর্ডার ম্যানেজমেন্ট</h3>
+    <div id="orderList">লোড হচ্ছে...</div>
 </div>
 
 <div id="manageSec" class="section">
     <h3>পণ্য ম্যানেজ করুন</h3>
-    <div id="productList">পণ্য লোড হচ্ছে...</div>
+    <div id="productList">লোড হচ্ছে...</div>
 </div>
 
 <div id="sliderSec" class="section">
     <h3>স্লাইডার সেটআপ</h3>
-    <input type="text" id="bannerUrl" placeholder="ব্যানার লিঙ্ক দিন">
-    <button class="btn" onclick="updateBanner()" style="background: var(--green);">ব্যানার আপডেট করুন</button>
+    <input type="text" id="bannerUrl" placeholder="ব্যানার লিঙ্ক">
+    <button class="btn" onclick="updateBanner()">আপডেট করুন</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -122,7 +124,6 @@
         else { preview.style.display = 'none'; }
     }
 
-    // অর্ডার লিস্ট ও টোটাল সেলস ক্যালকুলেশন
     db.ref("orders").on("value", snap => {
         document.getElementById('oCount').innerText = snap.numChildren();
         const list = document.getElementById('orderList');
@@ -134,16 +135,23 @@
             const st = o.status || 'Pending';
             if(st === 'Delivered') sales += parseInt(o.price || 0);
             
+            let borderColor = 'var(--orange)';
+            if(st === 'Booking') borderColor = 'var(--purple)';
+            if(st === 'Processing') borderColor = 'var(--blue)';
+            if(st === 'Delivered') borderColor = 'var(--green)';
+            
             list.innerHTML += `
-            <div style="background:#f1f3f4; padding:15px; margin-bottom:12px; border-radius:12px; border-left:6px solid ${st==='Delivered'?'var(--green)':'var(--orange)'};">
+            <div style="background:#f1f3f4; padding:15px; margin-bottom:15px; border-radius:12px; border-left:6px solid ${borderColor};">
                 <span class="status-badge ${st.toLowerCase()}">${st}</span><br>
                 <b>পণ্য: ${o.product}</b> (৳${o.price})<br>
-                <hr style="border:0.2px solid #ccc; margin:8px 0;">
-                <b>কাস্টমার:</b> ${o.customer} | <b>ফোন:</b> ${o.phone}<br>
+                <hr style="border:0.1px solid #ccc; margin:8px 0;">
+                <b>কাস্টমার:</b> ${o.customer} | <b>ফোন:</b> <a href="tel:${o.phone}">${o.phone}</a><br>
                 <b>ঠিকানা:</b> ${o.address}<br>
-                <div style="margin-top:10px;">
-                    <button onclick="updateStatus('${child.key}', 'Delivered')" style="background:var(--green); color:white; border:none; padding:6px 10px; border-radius:5px; cursor:pointer; font-size:12px;">Mark Delivered</button>
-                    <button onclick="del('orders/${child.key}')" style="background:var(--red); color:white; border:none; padding:6px 10px; border-radius:5px; cursor:pointer; font-size:12px; margin-left:5px;">Delete</button>
+                <div style="margin-top:12px; display: flex; flex-wrap: wrap; gap: 5px;">
+                    <button onclick="updateStatus('${child.key}', 'Booking')" style="background:var(--purple); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Booking</button>
+                    <button onclick="updateStatus('${child.key}', 'Processing')" style="background:var(--blue); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Processing</button>
+                    <button onclick="updateStatus('${child.key}', 'Delivered')" style="background:var(--green); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Delivered</button>
+                    <button onclick="del('orders/${child.key}')" style="background:var(--red); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:10px;">Delete</button>
                 </div>
             </div>`;
         });
@@ -151,10 +159,9 @@
     });
 
     function updateStatus(key, status) {
-        db.ref("orders/" + key).update({ status: status }).then(() => alert("Status Updated!"));
+        db.ref("orders/" + key).update({ status: status }).then(() => alert("স্ট্যাটাস আপডেট হয়েছে!"));
     }
 
-    // পন্যের তালিকা ও এডিট
     db.ref("products").on("value", snap => {
         document.getElementById('pCount').innerText = snap.numChildren();
         const list = document.getElementById('productList');
@@ -163,10 +170,8 @@
             const p = child.val();
             list.innerHTML += `<div style="background:#fff; border:1px solid #eee; margin-bottom:8px; padding:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
                 <div><b>${p.name}</b><br><small>${p.salePrice}৳</small></div>
-                <div>
-                    <i class="fa fa-edit" style="color:blue; cursor:pointer; padding:10px;" onclick="editProduct('${child.key}')"></i>
-                    <i class="fa fa-trash" style="color:red; cursor:pointer; padding:10px;" onclick="del('products/${child.key}')"></i>
-                </div>
+                <div><i class="fa fa-edit" style="color:blue; cursor:pointer; padding:10px;" onclick="editProduct('${child.key}')"></i>
+                <i class="fa fa-trash" style="color:red; cursor:pointer; padding:10px;" onclick="del('products/${child.key}')"></i></div>
             </div>`;
         });
     });
@@ -176,7 +181,7 @@
             const p = snap.val();
             currentEditKey = key;
             show('upSec');
-            document.getElementById('formTitle').innerText = "পণ্য আপডেট করুন";
+            document.getElementById('formTitle').innerText = "Update Product";
             document.getElementById('imgUrl').value = p.img || "";
             previewImg(p.img);
             document.getElementById('name').value = p.name || "";
@@ -199,39 +204,25 @@
             stockStatus: document.getElementById('stock').value,
             time: Date.now()
         };
-        db.ref("products/" + currentEditKey).update(data).then(() => {
-            alert("সফলভাবে আপডেট হয়েছে!");
-            location.reload();
-        });
+        db.ref("products/" + currentEditKey).update(data).then(() => { alert("আপডেট সফল!"); location.reload(); });
     }
 
     function upload() {
-        const img = document.getElementById('imgUrl').value;
-        const name = document.getElementById('name').value;
-        const salePrice = document.getElementById('salePrice').value;
-        if(!img || !name || !salePrice) return alert("তথ্য পূরণ করুন!");
-        
-        db.ref("products").push({
-            img, name, 
+        const data = {
+            img: document.getElementById('imgUrl').value,
+            name: document.getElementById('name').value,
             regPrice: document.getElementById('regPrice').value,
-            salePrice, 
+            salePrice: document.getElementById('salePrice').value,
             desc: document.getElementById('desc').value,
             stockStatus: document.getElementById('stock').value,
             time: Date.now()
-        }).then(() => { alert("পণ্য যোগ হয়েছে!"); location.reload(); });
+        };
+        if(!data.name || !data.salePrice) return alert("তথ্য দিন!");
+        db.ref("products").push(data).then(() => { alert("পণ্য যোগ হয়েছে!"); location.reload(); });
     }
 
-    function del(path) {
-        if(confirm("আপনি কি নিশ্চিত?")) {
-            db.ref(path).remove().then(() => alert("ডিলিট হয়েছে!"));
-        }
-    }
-
-    function updateBanner() {
-        const url = document.getElementById('bannerUrl').value;
-        if(!url) return alert("লিঙ্ক দিন!");
-        db.ref("settings/banner").set(url).then(() => alert("ব্যানার আপডেট হয়েছে!"));
-    }
+    function del(path) { if(confirm("নিশ্চিত?")) db.ref(path).remove().then(() => alert("ডিলিট হয়েছে!")); }
+    function updateBanner() { db.ref("settings/banner").set(document.getElementById('bannerUrl').value).then(() => alert("ব্যানার আপডেট হয়েছে!")); }
 </script>
 </body>
 </html>
