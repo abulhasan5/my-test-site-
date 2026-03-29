@@ -12,24 +12,26 @@ body{margin:0;font-family:sans-serif;background:var(--bg);}
 
 .header{
  background:linear-gradient(135deg,#1e88e5,#1565c0);
- padding:20px;color:#fff;
+ padding:18px;color:#fff;
  display:flex;justify-content:space-between;align-items:center;
+ border-bottom-left-radius:20px;
+ border-bottom-right-radius:20px;
 }
-.brand{font-size:22px;font-weight:bold;}
+.brand{font-size:20px;font-weight:bold;}
 
 .banner img{width:100%;border-radius:15px;margin:10px 0;}
-
 .section{padding:10px;}
 
 .social{
  display:flex;justify-content:space-around;background:#fff;
  padding:15px;border-radius:15px;
+ box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
-.social i{font-size:30px;}
+.social i{font-size:28px;color:var(--primary);}
 
 .notice{
  margin-top:10px;
- padding:20px;color:#fff;border-radius:15px;
+ padding:18px;color:#fff;border-radius:15px;
  background:linear-gradient(135deg,#1e88e5,#5e35b1);
 }
 
@@ -40,22 +42,25 @@ body{margin:0;font-family:sans-serif;background:var(--bg);}
 .box{
  background:#fff;border-radius:15px;padding:10px;text-align:center;
  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+ font-size:12px;
 }
-.box i{font-size:24px;color:var(--primary);}
+.box i{font-size:22px;color:var(--primary);margin-bottom:5px;}
 
 .bottom{
  position:fixed;bottom:0;width:100%;background:#fff;
  display:flex;justify-content:space-around;padding:10px;
  box-shadow:0 -5px 10px rgba(0,0,0,0.1);
+ border-top-left-radius:15px;
+ border-top-right-radius:15px;
 }
-.nav{text-align:center;color:#777;}
+.nav{text-align:center;color:#777;font-size:12px;}
 .nav.active{color:var(--primary);}
 
 .login{
  display:flex;flex-direction:column;gap:10px;padding:20px;
 }
-.input{padding:10px;border-radius:10px;border:1px solid #ccc;}
-.btn{padding:10px;border:none;border-radius:10px;background:var(--primary);color:#fff;}
+.input{padding:12px;border-radius:10px;border:1px solid #ccc;}
+.btn{padding:12px;border:none;border-radius:10px;background:var(--primary);color:#fff;font-weight:bold;}
 </style><script>
 const firebaseConfig={
  apiKey:"AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
@@ -65,34 +70,55 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth();
 
+// AUTO LOGIN
+firebase.auth().onAuthStateChanged(user=>{
+ if(user){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('homePage').style.display='block';
+ }
+});
+
 function login(){
  let email=document.getElementById('email').value;
  let pass=document.getElementById('pass').value;
+
+ if(!email || !pass){alert('ইমেইল ও পাসওয়ার্ড দিন');return;}
+
  auth.signInWithEmailAndPassword(email,pass)
  .then(()=>{
+  alert('লগইন সফল ✅');
   document.getElementById('loginPage').style.display='none';
   document.getElementById('homePage').style.display='block';
  })
- .catch(()=>alert('ভুল লগইন'));
+ .catch((error)=>alert(error.message));
 }
 
 function register(){
  let email=document.getElementById('email').value;
  let pass=document.getElementById('pass').value;
+
+ if(!email || !pass){alert('ইমেইল ও পাসওয়ার্ড দিন');return;}
+ if(pass.length<6){alert('পাসওয়ার্ড ৬ ডিজিট হতে হবে');return;}
+
  auth.createUserWithEmailAndPassword(email,pass)
- .then(()=>alert('রেজিস্টার সফল'));
+ .then(()=>alert('রেজিস্টার সফল ✅ এখন লগইন করুন'))
+ .catch((error)=>alert(error.message));
 }
-</script></head><body><!-- LOGIN --><div id="loginPage" class="login">
+
+function logout(){
+ auth.signOut().then(()=>location.reload());
+}
+</script></head><body><div id="loginPage" class="login">
  <h2>SMART BD লগইন</h2>
  <input id="email" class="input" placeholder="Email">
  <input id="pass" type="password" class="input" placeholder="Password">
  <button class="btn" onclick="login()">লগইন</button>
  <button class="btn" onclick="register()">রেজিস্টার</button>
-</div><!-- HOME --><div id="homePage" style="display:none">
+</div><div id="homePage" style="display:none">
  <div class="header">
   <i class="fa fa-bars"></i>
   <div class="brand">SMART BD</div>
-  <i class="fa fa-shopping-cart"></i>
+  <i class="fa fa-sign-out" onclick="logout()"></i>
  </div> <div class="section">
   <div class="banner">
    <img src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg">
@@ -103,7 +129,7 @@ function register(){
    <i class="fab fa-telegram"></i>
   </div>  <div class="notice">
    <h3>নোটিশ বোর্ড</h3>
-   <p>স্বাগতম SMART BD তে</p>
+   <p>SMART BD তে আপনাকে স্বাগতম</p>
   </div>  <div class="grid">
    <div class="box"><i class="fa fa-shopping-cart"></i><br>প্রোডাক্ট</div>
    <div class="box"><i class="fa fa-search"></i><br>সার্চ</div>
