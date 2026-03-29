@@ -1,191 +1,215 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUY BD | Your Reliable E-commerce Hub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        :root { --primary: #0d47a1; --bg: #f8f9fa; --red: #d32f2f; --green: #2e7d32; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
-        
-        .header { background: var(--primary); padding: 15px 15px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(13, 71, 161, 0.2); }
-        .brand-name { color: white; font-size: 24px; font-weight: 800; margin-bottom: 12px; display: block; letter-spacing: 1px; }
-        .search-container { position: relative; }
-        .search-container input { width: 100%; padding: 12px 40px; border-radius: 12px; border: none; box-sizing: border-box; font-size: 14px; outline: none; }
-        .search-container i { position: absolute; left: 12px; top: 12px; color: var(--primary); font-size: 16px; }
+<title>SMART BD | E-commerce</title>
 
-        .banner { margin: 15px; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); background: white; }
-        .banner img { width: 100%; display: block; max-height: 160px; object-fit: cover; }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        .categories { display: flex; justify-content: space-around; padding: 10px 5px; margin-top: 5px; }
-        .cat-item { text-align: center; font-size: 11px; font-weight: 600; color: #555; cursor: pointer; }
-        .cat-icon { width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); color: var(--primary); font-size: 20px; }
-        .cat-icon.active { background: var(--primary); color: white; }
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-        .section-title { margin: 15px 15px 12px; font-size: 17px; font-weight: bold; color: #333; display: flex; align-items: center; }
-        .section-title::before { content: ""; width: 4px; height: 18px; background: var(--primary); margin-right: 8px; border-radius: 2px; }
+<style>
+:root { --primary:#0d47a1; --bg:#f8f9fa; --red:#d32f2f; --green:#2e7d32; }
+body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom:80px}
 
-        /* সেকশন কন্ট্রোল */
-        .content-section { display: none; padding: 15px; animation: fadeIn 0.3s; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.header{background:var(--primary);padding:15px;border-radius:0 0 20px 20px}
+.brand-name{color:#fff;font-size:24px;font-weight:bold}
 
-        /* প্রোডাক্ট গ্রিড */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .product-card { background: white; border-radius: 15px; padding: 8px; position: relative; border: 1px solid #eee; }
-        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 12px; }
-        .stock-badge { position: absolute; top: 12px; right: 12px; padding: 3px 6px; border-radius: 6px; font-size: 9px; font-weight: bold; color: white; }
-        .in-stock { background: var(--green); }
-        .out-stock { background: var(--red); }
-        .sale-price { color: var(--primary); font-weight: 800; font-size: 15px; }
-        .buy-btn { background: var(--primary); color: white; border: none; padding: 8px; border-radius: 8px; width: 100%; margin-top: 8px; font-weight: bold; cursor: pointer; }
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+.product-card{background:#fff;padding:8px;border-radius:12px}
+.product-card img{width:100%;height:120px;object-fit:cover;border-radius:10px}
 
-        /* বটম নেভিগেশন */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 15px; border-top-right-radius: 15px; z-index: 1000; }
-        .nav-item { text-align: center; color: #a0a0a0; font-size: 10px; text-decoration: none; cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
+.buy-btn{background:var(--primary);color:#fff;border:none;padding:8px;border-radius:8px;width:100%;margin-top:5px}
 
-        /* ইনপুট ফিল্ড স্টাইল */
-        .input-group { background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .track-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 10px; }
-    </style>
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#fff}
+.nav-item{flex:1;text-align:center;padding:10px}
+.nav-item.active{color:var(--primary);font-weight:bold}
+</style>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
-            authDomain: "stepupbd-211d1.firebaseapp.com",
-            projectId: "stepupbd-211d1",
-            storageBucket: "stepupbd-211d1.appspot.com",
-            databaseURL: "https://stepupbd-211d1-default-rtdb.firebaseio.com"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+<script>
+const firebaseConfig = {
+apiKey:"AIzaSy...",
+databaseURL:"https://stepupbd-211d1-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-        // সেকশন পরিবর্তন করার ফাংশন
-        function showSection(sectionId, el) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-        }
+let cart=[];
 
-        // প্রোডাক্ট লোড করা
-        function loadProducts() {
-            database.ref('products').on('value', (snapshot) => {
-                const grid = document.getElementById('productGrid');
-                grid.innerHTML = "";
-                snapshot.forEach(child => {
-                    const p = child.val();
-                    const stockClass = p.stockStatus === 'In Stock' ? 'in-stock' : 'out-stock';
-                    grid.innerHTML += `
-                        <div class="product-card">
-                            <span class="stock-badge ${stockClass}">${p.stockStatus || 'Out Stock'}</span>
-                            <img src="${p.img || p.image}" onerror="this.src='https://via.placeholder.com/130'">
-                            <h3 style="font-size:12px; height:30px; overflow:hidden;">${p.name}</h3>
-                            <div class="sale-price">৳${p.salePrice}</div>
-                            <button class="buy-btn" onclick="orderNow('${p.name}', '${p.salePrice}', '${p.img || p.image}')">Order Now</button>
-                        </div>`;
-                });
-            });
-        }
+// section
+function showSection(id,el){
+document.querySelectorAll('.content-section').forEach(s=>s.style.display='none');
+document.getElementById(id).style.display='block';
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+el.classList.add('active');
+}
 
-        // অর্ডার করার ফাংশন
-        function orderNow(name, price, img) {
-            const n = prompt("আপনার নাম:");
-            const p = prompt("মোবাইল নম্বর:");
-            const a = prompt("জেলা, থানা ও পূর্ণ ঠিকানা:");
-            const s = prompt("সাইজ (M, L, XL, XXL):");
-            if(n && p && a && s) {
-                database.ref('orders').push({ 
-                    product: name, price: price, productImg: img,
-                    customer: n, phone: p, address: a, size: s,
-                    status: 'Pending', time: Date.now() 
-                });
-                alert("আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে!");
-            }
-        }
+// load product (FIXED)
+function loadProducts(){
+db.ref('products').once('value').then(snap=>{
+let grid=document.getElementById('productGrid');
+grid.innerHTML="";
 
-        // অর্ডার ট্র্যাকিং ফাংশন
-        function trackOrder() {
-            const phone = document.getElementById('phoneInput').value;
-            const resArea = document.getElementById('trackResult');
-            if(!phone) return alert("নম্বর দিন");
-            resArea.innerHTML = "খোঁজা হচ্ছে...";
-            database.ref('orders').once('value', (snap) => {
-                resArea.innerHTML = "";
-                let found = false;
-                snap.forEach(child => {
-                    const o = child.val();
-                    if(o.phone == phone) {
-                        found = true;
-                        resArea.innerHTML += `
-                            <div class="input-group" style="border-left:5px solid var(--primary)">
-                                <b>${o.product}</b><br>
-                                <small>Status: <span style="color:var(--primary)">${o.status || 'Pending'}</span></small>
-                            </div>`;
-                    }
-                });
-                if(!found) resArea.innerHTML = "কোনো অর্ডার পাওয়া যায়নি।";
-            });
-        }
-    </script>
+snap.forEach(c=>{
+let p=c.val();
+
+grid.innerHTML+=`
+<div class="product-card">
+<img src="${p.img || p.image}">
+<h4>${p.name}</h4>
+<p>৳${p.salePrice}</p>
+
+<button class="buy-btn" onclick="addToCart(this)"
+data-name="${p.name}"
+data-price="${p.salePrice}"
+data-img="${p.img || p.image}">
+🛒 Add to Cart
+</button>
+
+<button class="buy-btn" onclick="orderNow(this)"
+data-name="${p.name}"
+data-price="${p.salePrice}">
+⚡ Order Now
+</button>
+
+</div>`;
+});
+});
+}
+
+// CART
+function addToCart(btn){
+cart.push({
+name:btn.dataset.name,
+price:btn.dataset.price
+});
+alert("কার্টে যোগ হয়েছে 🛒");
+renderCart();
+}
+
+function renderCart(){
+let sec=document.getElementById('cartSection');
+
+if(cart.length==0){
+sec.innerHTML="<p>কার্ট খালি</p>";
+return;
+}
+
+let html="<h3>MY CART</h3>";
+
+cart.forEach((c,i)=>{
+html+=`${c.name} - ৳${c.price}
+<button onclick="removeCart(${i})">❌</button><br>`;
+});
+
+html+=`<button onclick="checkout()">Checkout</button>`;
+sec.innerHTML=html;
+}
+
+function removeCart(i){
+cart.splice(i,1);
+renderCart();
+}
+
+// PAYMENT + ORDER
+function checkout(){
+
+alert("💳 Payment করুন:\nbKash: 01XXXXXXXXX\nNagad: 01XXXXXXXXX");
+
+let n=prompt("নাম");
+let p=prompt("ফোন");
+let a=prompt("ঠিকানা");
+let trx=prompt("Transaction ID");
+
+cart.forEach(c=>{
+db.ref('orders').push({
+product:c.name,
+price:c.price,
+customer:n,
+phone:p,
+address:a,
+trx:trx,
+status:"Paid",
+time:Date.now()
+});
+});
+
+alert("অর্ডার সম্পন্ন ✅");
+cart=[];
+renderCart();
+}
+
+// direct order
+function orderNow(btn){
+
+alert("💳 Payment করুন:\nbKash: 01XXXXXXXXX");
+
+let n=prompt("নাম");
+let p=prompt("ফোন");
+let a=prompt("ঠিকানা");
+let trx=prompt("Transaction ID");
+
+db.ref('orders').push({
+product:btn.dataset.name,
+price:btn.dataset.price,
+customer:n,
+phone:p,
+address:a,
+trx:trx,
+status:"Paid"
+});
+
+alert("অর্ডার সফল ✅");
+}
+
+// TRACK
+function trackOrder(){
+let phone=document.getElementById('phoneInput').value;
+let res=document.getElementById('trackResult');
+
+db.ref('orders').once('value').then(snap=>{
+res.innerHTML="";
+snap.forEach(c=>{
+let o=c.val();
+if(o.phone==phone){
+res.innerHTML+=`<p>${o.product} - ${o.status}</p>`;
+}
+});
+});
+}
+
+// FIX LOAD
+window.addEventListener("load", loadProducts);
+</script>
+
 </head>
-<body onload="loadProducts()">
 
-    <div class="header">
-        <span class="brand-name">BUY BD</span>
-        <div class="search-container">
-            <i class="fa fa-search"></i>
-            <input type="text" placeholder="পণ্য খুঁজুন...">
-        </div>
-    </div>
+<body>
 
-    <div id="homeSection" class="content-section active">
-        <div class="banner">
-            <img src="https://img.freepik.com/free-vector/colorful-sale-background-with-product-description_1361-1258.jpg">
-        </div>
-        <div class="categories">
-            <div class="cat-item"><div class="cat-icon active"><i class="fa fa-th-large"></i></div>All</div>
-            <div class="cat-item"><div class="cat-icon"><i class="fa fa-tshirt"></i></div>Fashion</div>
-            <div class="cat-item"><div class="cat-icon"><i class="fa fa-snowflake"></i></div>Winter</div>
-        </div>
-        <div class="section-title">ALL PRODUCTS</div>
-        <div id="productGrid" class="grid"></div>
-    </div>
+<div class="header">
+<span class="brand-name">SMART BD</span>
+</div>
 
-    <div id="cartSection" class="content-section">
-        <div class="section-title">MY CART</div>
-        <p style="text-align:center; color:#888;">আপনার কার্ট বর্তমানে খালি আছে।</p>
-    </div>
+<div id="homeSection" class="content-section">
+<div id="productGrid" class="grid"></div>
+</div>
 
-    <div id="orderSection" class="content-section">
-        <div class="section-title">TRACK ORDERS</div>
-        <div class="input-group">
-            <input type="number" id="phoneInput" placeholder="আপনার ফোন নম্বর দিন">
-            <button class="track-btn" onclick="trackOrder()">খুঁজুন</button>
-        </div>
-        <div id="trackResult"></div>
-    </div>
+<div id="cartSection" class="content-section" style="display:none"></div>
 
-    <div id="accountSection" class="content-section">
-        <div class="section-title">MY ACCOUNT</div>
-        <div class="input-group">
-            <p>আমাদের সাথে থাকার জন্য ধন্যবাদ।</p>
-            <p>হেল্পলাইন: 01XXX-XXXXXX</p>
-        </div>
-    </div>
+<div id="orderSection" class="content-section" style="display:none">
+<input id="phoneInput" placeholder="ফোন">
+<button onclick="trackOrder()">Track</button>
+<div id="trackResult"></div>
+</div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="showSection('homeSection', this)"><i class="fa fa-home"></i>Home</div>
-        <div class="nav-item" onclick="showSection('cartSection', this)"><i class="fa fa-shopping-cart"></i>Cart</div>
-        <div class="nav-item" onclick="showSection('orderSection', this)"><i class="fa fa-truck"></i>Orders</div>
-        <div class="nav-item" onclick="showSection('accountSection', this)"><i class="fa fa-user"></i>Account</div>
-    </div>
+<div class="bottom-nav">
+<div class="nav-item active" onclick="showSection('homeSection',this)">Home</div>
+<div class="nav-item" onclick="showSection('cartSection',this)">Cart</div>
+<div class="nav-item" onclick="showSection('orderSection',this)">Orders</div>
+</div>
 
 </body>
 </html>
