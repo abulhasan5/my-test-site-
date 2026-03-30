@@ -9,51 +9,47 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --primary: #ff8000; --bg: #fdfdfd; --text: #333; }
+        :root { --primary: #ff8000; --bg: #fdfdfd; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 70px; }
 
-        /* হেডার ও সার্চ */
+        /* হেডার */
         .header { background: var(--primary); padding: 20px 15px; color: white; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; }
         .app-title { font-size: 24px; font-weight: bold; margin-bottom: 15px; }
-        .search-bar { background: white; display: flex; align-items: center; padding: 10px 15px; border-radius: 12px; }
-        .search-bar input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px; }
-        .search-bar i { color: #999; }
-
-        /* ব্যানার */
-        .banner { margin: 15px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .banner img { width: 100%; display: block; }
+        .search-box { background: white; display: flex; align-items: center; padding: 10px 15px; border-radius: 12px; }
+        .search-box input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px; }
 
         /* ক্যাটাগরি */
-        .cat-row { display: flex; justify-content: space-around; padding: 10px; background: white; margin-bottom: 10px; }
+        .cat-row { display: flex; justify-content: space-around; padding: 15px; background: white; margin-bottom: 10px; }
         .cat-item { text-align: center; cursor: pointer; }
-        .cat-img { width: 60px; height: 60px; border-radius: 15px; background: #fff; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; font-size: 22px; color: var(--primary); }
-        .cat-item.active .cat-img { background: var(--primary); color: white; border-color: var(--primary); }
-        .cat-item span { font-size: 12px; font-weight: 500; color: #555; }
+        .cat-icon { width: 55px; height: 55px; border-radius: 15px; background: #fff; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); margin-bottom: 5px; }
+        .cat-item.active .cat-icon { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* প্রোডাক্ট লিস্ট */
-        .section-header { padding: 15px; font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-        .section-header::before { content: ''; width: 4px; height: 20px; background: var(--primary); border-radius: 2px; }
+        /* প্রোডাক্ট গ্রিড */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; }
-        .card { background: white; border-radius: 15px; padding: 10px; position: relative; border: 1px solid #f0f0f0; }
+        .card { background: white; border-radius: 15px; padding: 10px; position: relative; border: 1px solid #f0f0f0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; cursor: pointer; }
         .p-name { font-size: 13px; margin: 8px 0; color: #444; height: 35px; overflow: hidden; font-weight: 600; }
-        .price-row { display: flex; align-items: center; gap: 5px; }
-        .new-p { color: var(--primary); font-weight: bold; font-size: 16px; }
-        .old-p { text-decoration: line-through; color: #bbb; font-size: 12px; }
-        .plus-btn { position: absolute; bottom: 10px; right: 10px; background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .price { color: var(--primary); font-weight: bold; }
+        .plus-btn { position: absolute; bottom: 10px; right: 10px; background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* ডিটেইলস পপআপ */
+        /* কার্ট লিস্ট */
+        .cart-item { display: flex; align-items: center; background: white; margin: 10px; padding: 12px; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cart-item img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
+        .cart-info { flex: 1; margin-left: 15px; }
+        .cart-info h4 { margin: 0; font-size: 14px; color: #333; }
+        .cart-info p { margin: 5px 0 0; color: var(--primary); font-weight: bold; }
+        .remove-btn { color: #ff4444; font-size: 18px; padding: 10px; cursor: pointer; }
+
+        /* মডাল */
         .details-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index: 2000; overflow-y: auto; }
-        .modal-header { padding: 15px; display: flex; justify-content: space-between; font-size: 20px; border-bottom: 1px solid #eee; }
-        .size-box, .color-box { display: flex; gap: 10px; margin: 15px 0; }
-        .size-btn, .color-btn { border: 1px solid #ddd; padding: 8px 20px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .size-btn, .color-btn { border: 1px solid #ddd; padding: 8px 18px; border-radius: 10px; cursor: pointer; display: inline-block; margin: 5px 5px 0 0; font-size: 13px; }
         .selected { border-color: var(--primary); color: var(--primary); background: #fff5eb; font-weight: bold; }
 
-        /* বটম নেভ */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 15px rgba(0,0,0,0.05); }
-        .nav-tab { text-align: center; color: #aaa; flex: 1; cursor: pointer; font-size: 12px; }
+        /* নেভিগেশন */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); }
+        .nav-tab { text-align: center; color: #bbb; flex: 1; font-size: 11px; cursor: pointer; }
         .nav-tab.active { color: var(--primary); font-weight: bold; }
-        .nav-tab i { font-size: 22px; margin-bottom: 4px; }
+        .nav-tab i { font-size: 22px; margin-bottom: 3px; }
 
         .page { display: none; }
         .active-page { display: block; }
@@ -64,71 +60,61 @@
     <div id="home" class="page active-page">
         <div class="header">
             <div class="app-title">BUY BD</div>
-            <div class="search-bar">
-                <i class="fa fa-search"></i>
-                <input type="text" placeholder="আপনার পছন্দের পণ্য খুঁজুন..." onkeyup="searchProduct(this.value)">
-            </div>
+            <div class="search-box"><i class="fa fa-search"></i><input type="text" placeholder="পণ্য খুঁজুন..." onkeyup="searchProduct(this.value)"></div>
         </div>
-        
-        <div class="banner">
-            <img src="https://i.ibb.co/hR0L1pC/welcome-offer.png" alt="Banner">
-        </div>
-
         <div class="cat-row">
-            <div class="cat-item active" onclick="filterCat('All', this)"><div class="cat-img"><i class="fa fa-th-large"></i></div><span>All</span></div>
-            <div class="cat-item" onclick="filterCat('Fashion', this)"><div class="cat-img"><i class="fa fa-tshirt"></i></div><span>Fashion</span></div>
-            <div class="cat-item" onclick="filterCat('Sports', this)"><div class="cat-img"><i class="fa fa-football-ball"></i></div><span>Sports</span></div>
-            <div class="cat-item" onclick="filterCat('Winter', this)"><div class="cat-img"><i class="fa fa-snowflake"></i></div><span>Winter</span></div>
+            <div class="cat-item active" onclick="filterCat('All', this)"><div class="cat-icon"><i class="fa fa-th-large"></i></div><span>All</span></div>
+            <div class="cat-item" onclick="filterCat('Fashion', this)"><div class="cat-icon"><i class="fa fa-tshirt"></i></div><span>Fashion</span></div>
+            <div class="cat-item" onclick="filterCat('Sports', this)"><div class="cat-icon"><i class="fa fa-football-ball"></i></div><span>Sports</span></div>
+            <div class="cat-item" onclick="filterCat('Winter', this)"><div class="cat-icon"><i class="fa fa-snowflake"></i></div><span>Winter</span></div>
         </div>
-
-        <div class="section-header" id="listTitle">ALL PRODUCT</div>
         <div class="grid" id="productGrid"></div>
     </div>
 
     <div id="cart" class="page">
         <div class="header" style="padding: 15px;"><div class="app-title">আপনার কার্ট</div></div>
-        <div style="text-align: center; padding: 100px 20px;">
-            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329974.png" width="120" style="opacity: 0.2;">
-            <p style="color: #888; margin-top: 20px;">আপনার কার্টটি বর্তমানে খালি আছে!</p>
-            <button onclick="showPage('home')" style="background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 25px; font-weight: bold; margin-top: 15px;">শপিং শুরু করুন</button>
+        <div id="cartList"></div>
+        
+        <div id="emptyCart" style="text-align: center; padding: 100px 20px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329974.png" width="100" style="opacity: 0.1;">
+            <p style="color: #999; margin-top: 20px;">কার্ট বর্তমানে খালি আছে</p>
+            <button onclick="showPage('home')" style="background: var(--primary); color: white; border: none; padding: 12px 35px; border-radius: 25px; font-weight: bold;">শপিং করুন</button>
+        </div>
+
+        <div id="cartFooter" style="padding: 20px; display: none; border-top: 1px solid #eee;">
+            <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+                <span>মোট পরিমাণ:</span>
+                <span id="totalPrice" style="color: var(--primary);">৳ 0</span>
+            </div>
+            <button onclick="alert('অর্ডার সিস্টেম শীঘ্রই আসছে!')" style="width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 15px; font-size: 16px; font-weight: bold;">অর্ডার সম্পন্ন করুন</button>
         </div>
     </div>
 
     <div id="detailsModal" class="details-modal">
-        <div class="modal-header">
-            <i class="fa fa-arrow-left" onclick="closeDetails()"></i>
-            <span>বিস্তারিত</span>
-            <i class="fa fa-heart"></i>
-        </div>
         <div style="padding:15px">
-            <img id="detImg" src="" style="width:100%; border-radius:15px; height: 300px; object-fit: cover;">
-            <h2 id="detTitle" style="margin:15px 0 5px 0;"></h2>
-            <h3 id="detPrice" style="color:var(--primary); margin:0;"></h3>
+            <i class="fa fa-arrow-left" onclick="closeDetails()" style="font-size: 22px; color: #444;"></i>
+            <img id="detImg" src="" style="width:100%; border-radius:20px; margin-top: 15px; height: 320px; object-fit: cover;">
+            <h2 id="detTitle" style="margin: 20px 0 10px 0; color: #333;"></h2>
+            <h3 id="detPrice" style="color:var(--primary); font-size: 24px; margin: 0;"></h3>
             
-            <p style="margin-top:20px; font-weight:bold;">রঙ নির্বাচন করুন:</p>
-            <div class="color-box">
-                <div class="color-btn selected" onclick="selectColor(this)"><span style="background:red; width:12px; height:12px; display:inline-block; border-radius:50%; margin-right:5px;"></span> লাল</div>
+            <div id="colorSection">
+                <p style="font-weight: bold; margin-top: 20px;">রঙ নির্বাচন করুন:</p>
+                <div id="colorArea"></div>
             </div>
             
-            <p style="margin-top:10px; font-weight:bold;">আকার নির্বাচন করুন:</p>
-            <div class="size-box">
-                <div class="size-btn" onclick="selectSize(this)">এম</div>
-                <div class="size-btn selected" onclick="selectSize(this)">এল</div>
-                <div class="size-btn" onclick="selectSize(this)">এক্সএল</div>
+            <div id="sizeSection">
+                <p style="font-weight: bold; margin-top: 15px;">আকার নির্বাচন করুন:</p>
+                <div id="sizeArea"></div>
             </div>
-            
-            <div style="display:flex; gap:10px; margin-top:30px; position: sticky; bottom: 20px;">
-                <button onclick="alert('কার্টে যোগ হয়েছে')" style="flex:1; padding:15px; border-radius:12px; border:1px solid var(--primary); background:white; color:var(--primary); font-weight:bold;">🛒 কার্ট</button>
-                <button onclick="alert('অর্ডার সফল')" style="flex:2; padding:15px; border-radius:12px; border:none; background:var(--primary); color:white; font-weight:bold;">এখনই অর্ডার করুন</button>
-            </div>
+
+            <button id="addBtn" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:15px; margin-top:30px; font-weight:bold; font-size: 16px; box-shadow: 0 5px 15px rgba(255,128,0,0.3);">কার্টে যোগ করুন</button>
         </div>
     </div>
 
     <div class="bottom-nav">
         <div class="nav-tab active" id="tab-home" onclick="showPage('home')"><i class="fa fa-home"></i><br>Home</div>
         <div class="nav-tab" id="tab-cart" onclick="showPage('cart')"><i class="fa fa-shopping-bag"></i><br>Cart</div>
-        <div class="nav-tab" id="tab-orders" onclick="showPage('orders')"><i class="fa fa-truck"></i><br>Orders</div>
-        <div class="nav-tab" id="tab-account" onclick="showPage('account')"><i class="fa fa-user"></i><br>Account</div>
+        <div class="nav-tab" id="tab-account" onclick="showPage('account')"><i class="fa fa-user-circle"></i><br>Account</div>
     </div>
 
     <script>
@@ -140,7 +126,11 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // ১. প্রোডাক্ট লোড করা
+        let cart = []; // কার্ট লিস্ট জমা রাখার জন্য
+        let selectedColor = "";
+        let selectedSize = "";
+
+        // ১. ডাটাবেস থেকে প্রোডাক্ট লোড
         function loadData() {
             db.ref('products').on('value', (snap) => {
                 const grid = document.getElementById('productGrid');
@@ -149,72 +139,117 @@
                     const p = child.val();
                     grid.innerHTML += `
                         <div class="card">
-                            <img src="${p.img || p.image}" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}')">
-                            <div class="plus-btn" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}')">+</div>
+                            <img src="${p.img || p.image}" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}', '${p.color}', '${p.size}')">
+                            <div class="plus-btn" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}', '${p.color}', '${p.size}')">+</div>
                             <div class="p-name">${p.name}</div>
-                            <div class="price-row">
-                                <span class="new-p">৳${p.salePrice}</span>
-                                <span class="old-p">৳${parseInt(p.salePrice)+100}</span>
-                            </div>
+                            <div class="price">৳${p.salePrice}</div>
                         </div>`;
                 });
             });
         }
 
-        // ২. ক্যাটাগরি ফিল্টার
+        // ২. মডাল ওপেন এবং ডাইনামিক সাইজ/কালার
+        function openDetails(name, price, img, colors, sizes) {
+            selectedColor = ""; selectedSize = "";
+            document.getElementById('detTitle').innerText = name;
+            document.getElementById('detPrice').innerText = '৳ ' + price;
+            document.getElementById('detImg').src = img;
+            
+            // কালার রেন্ডার
+            const cArea = document.getElementById('colorArea');
+            cArea.innerHTML = colors ? colors.split(',').map(c => `<div class="color-btn" onclick="selectItem(this, 'color', '${c}')">${c}</div>`).join('') : "";
+            document.getElementById('colorSection').style.display = colors ? "block" : "none";
+
+            // সাইজ রেন্ডার
+            const sArea = document.getElementById('sizeArea');
+            sArea.innerHTML = sizes ? sizes.split(',').map(s => `<div class="size-btn" onclick="selectItem(this, 'size', '${s}')">${s}</div>`).join('') : "";
+            document.getElementById('sizeSection').style.display = sizes ? "block" : "none";
+
+            document.getElementById('addBtn').onclick = () => addToCart(name, price, img);
+            document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        function selectItem(el, type, val) {
+            const cls = type === 'color' ? '.color-btn' : '.size-btn';
+            document.querySelectorAll(cls).forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            if(type === 'color') selectedColor = val; else selectedSize = val;
+        }
+
+        // ৩. কার্টে যোগ করা (আসল ফাংশন)
+        function addToCart(name, price, img) {
+            cart.push({ name, price: parseInt(price), img, color: selectedColor, size: selectedSize });
+            updateCartUI();
+            closeDetails();
+            alert("সফলভাবে কার্টে যোগ করা হয়েছে!");
+        }
+
+        // ৪. কার্ট পেজ আপডেট করা
+        function updateCartUI() {
+            const list = document.getElementById('cartList');
+            const footer = document.getElementById('cartFooter');
+            const empty = document.getElementById('emptyCart');
+            const totalText = document.getElementById('totalPrice');
+
+            if(cart.length === 0) {
+                list.innerHTML = ""; footer.style.display = "none"; empty.style.display = "block";
+                return;
+            }
+
+            empty.style.display = "none";
+            footer.style.display = "block";
+            list.innerHTML = "";
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.img}">
+                        <div class="cart-info">
+                            <h4>${item.name}</h4>
+                            <small>${item.color ? 'কালার: '+item.color : ''} ${item.size ? ' সাইজ: '+item.size : ''}</small>
+                            <p>৳${item.price}</p>
+                        </div>
+                        <i class="fa fa-trash-alt remove-btn" onclick="removeItem(${index})"></i>
+                    </div>`;
+            });
+            totalText.innerText = "৳ " + total;
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        // ৫. ক্যাটাগরি ফিল্টার
         function filterCat(cat, el) {
             document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            document.getElementById('listTitle').innerText = cat === 'All' ? 'ALL PRODUCT' : cat.toUpperCase();
-            
             db.ref('products').once('value', (snap) => {
                 const grid = document.getElementById('productGrid');
                 grid.innerHTML = "";
                 snap.forEach(child => {
                     const p = child.val();
                     if(cat === 'All' || p.category === cat) {
-                        grid.innerHTML += `
-                        <div class="card">
-                            <img src="${p.img || p.image}" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}')">
-                            <div class="plus-btn" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}')">+</div>
-                            <div class="p-name">${p.name}</div>
-                            <div class="price-row"><span class="new-p">৳${p.salePrice}</span></div>
-                        </div>`;
+                        grid.innerHTML += `<div class="card"><img src="${p.img || p.image}" onclick="openDetails('${p.name}', '${p.salePrice}', '${p.img || p.image}', '${p.color}', '${p.size}')"><div class="plus-btn">+</div><div class="p-name">${p.name}</div><div class="price">৳${p.salePrice}</div></div>`;
                     }
                 });
             });
         }
 
-        // ৩. বিস্তারিত পপআপ
-        function openDetails(name, price, img) {
-            document.getElementById('detTitle').innerText = name;
-            document.getElementById('detPrice').innerText = '৳ ' + price;
-            document.getElementById('detImg').src = img;
-            document.getElementById('detailsModal').style.display = 'block';
-        }
-        function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
-
-        // ৪. সাইজ ও কালার সিলেক্ট লজিক
-        function selectSize(el) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-        function selectColor(el) {
-            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        // ৫. পেজ নেভিগেশন
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            if(document.getElementById(id)) document.getElementById(id).classList.add('active-page');
+            document.getElementById(id).classList.add('active-page');
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.getElementById('tab-' + id).classList.add('active');
+            window.scrollTo(0,0);
         }
 
+        function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
+        
         function searchProduct(v) {
-            let cards = document.querySelectorAll('.card');
-            cards.forEach(c => {
+            document.querySelectorAll('.card').forEach(c => {
                 c.style.display = c.innerText.toLowerCase().includes(v.toLowerCase()) ? "block" : "none";
             });
         }
