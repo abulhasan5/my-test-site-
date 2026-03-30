@@ -20,7 +20,7 @@ body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom: 80px;}
 }
 .brand{font-size:20px;font-weight:bold;}
 
-/* নতুন সার্চ বার ডিজাইন */
+/* সার্চ কন্টেইনার */
 .search-container {
     background: #fff;
     margin: 10px 15px;
@@ -103,7 +103,7 @@ function loadProducts() {
             grid.innerHTML += `
                 <div class="product-card">
                     <img src="${p.img || p.image}" onerror="this.src='https://via.placeholder.com/150'">
-                    <h3 style="font-size:12px; margin:5px 0;">${p.name}</h3>
+                    <h3 class="p-name" style="font-size:12px; margin:5px 0;">${p.name}</h3>
                     <div><span class="reg-price">৳${p.regPrice || ''}</span> <span class="sale-price">৳${p.salePrice}</span></div>
                     <button class="btn-buy" onclick="orderNow('${p.name}', '${p.salePrice}', '${p.img || p.image}')">Order Now</button>
                     <button onclick="addToCart('${child.key}', '${p.name}', '${p.salePrice}', '${p.img || p.image}')" style="background:#eee; border:none; width:100%; padding:5px; border-radius:5px; margin-top:5px; cursor:pointer; font-size:11px;">Add to Cart</button>
@@ -112,18 +112,23 @@ function loadProducts() {
     });
 }
 
-// সার্চ করার ফাংশন (নতুন যোগ করা)
+// আপনার বিশেষ সার্চ ফাংশন
 function filterProducts() {
     let input = document.getElementById('productSearch').value.toLowerCase();
     let productCards = document.querySelectorAll('.product-card');
+    let homeMainContent = document.getElementById('mainHomeContent');
     
-    // যদি টাইপ করা হয়, তবে সরাসরি প্রোডাক্ট পেজে নিয়ে যাবে
+    // টাইপ করা শুরু করলে ব্যানার/মেনু লুকিয়ে শুধু প্রোডাক্ট পেজ দেখাবে
     if(input.length > 0) {
+        homeMainContent.style.display = "none";
         showSection('productPage', document.getElementById('navProd'));
+    } else {
+        homeMainContent.style.display = "block";
+        showSection('homePage', document.querySelector('.nav.active'));
     }
 
     productCards.forEach(card => {
-        let name = card.querySelector('h3').innerText.toLowerCase();
+        let name = card.querySelector('.p-name').innerText.toLowerCase();
         card.style.display = name.includes(input) ? "block" : "none";
     });
 }
@@ -174,14 +179,14 @@ window.onload = function() { loadProducts(); };
 <body>
 
 <div id="homePage" class="content-section active">
- <div class="header"><i class="fa fa-bars"></i><div class="brand">SMART BD</div><i class="fa fa-bell"></i></div>
+ <div class="header"><i class="fa fa-bars"></i><div class="brand">SMART BD</div><i class="fa fa-bell"></i></div> 
  
  <div class="search-container">
     <i class="fa fa-search"></i>
     <input type="text" id="productSearch" placeholder="পণ্য খুঁজুন..." onkeyup="filterProducts()">
  </div>
 
- <div class="section">
+ <div class="section" id="mainHomeContent">
   <div class="banner"><img id="mainBanner" src=""></div>  
   <div class="social">
     <i class="fab fa-facebook" id="fbIcon"></i>
@@ -217,8 +222,8 @@ window.onload = function() { loadProducts(); };
     <div class="header"><div class="brand">PROFILE</div></div>
     <div class="section" style="text-align:center; padding:20px;">
         <i class="fa fa-user-circle" style="font-size:60px; color:var(--primary);"></i>
-        <h3>স্মার্ট বিডিতে আপনাকে স্বাগতম!</h3>
-        <p>হেল্পলাইন: 01952719871।</p>
+        <h3>স্বাগতম কাস্টমার!</h3>
+        <p>হেল্পলাইন: আপনার অ্যাডমিন প্যানেল থেকে দেখুন।</p>
     </div>
 </div>
 
