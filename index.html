@@ -20,6 +20,19 @@ body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom: 80px;}
 }
 .brand{font-size:20px;font-weight:bold;}
 
+/* নতুন সার্চ বার ডিজাইন */
+.search-container {
+    background: #fff;
+    margin: 10px 15px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.search-container i { color: #1565c0; margin-right: 10px; }
+.search-container input { border: none; outline: none; width: 100%; font-size: 14px; background: transparent; }
+
 .banner img{width:100%;border-radius:15px;margin:10px 0; max-height:180px; object-fit:cover;}
 .section{padding:10px;}
 
@@ -61,14 +74,11 @@ const database = firebase.database();
 
 let cartItems = JSON.parse(localStorage.getItem('smartBdCart')) || [];
 
-// ১. এডমিন সেটিংস কানেক্ট করা (ব্যানার, নোটিশ, সোশ্যাল লিঙ্ক)
 database.ref('settings').on('value', (snap) => {
     if(snap.exists()){
         const s = snap.val();
         if(s.banner) document.getElementById('mainBanner').src = s.banner;
         if(s.notice) document.getElementById('noticeText').innerText = s.notice;
-        
-        // সোশ্যাল লিঙ্ক সেটআপ
         document.getElementById('fbIcon').onclick = () => window.location.href = s.facebook || "#";
         document.getElementById('ytIcon').onclick = () => window.location.href = s.youtube || "#";
         document.getElementById('waIcon').onclick = () => window.location.href = "https://wa.me/" + s.whatsapp || "#";
@@ -84,7 +94,6 @@ function showSection(sectionId, el) {
     if(sectionId === 'cartSection') updateCartDisplay();
 }
 
-// ২. প্রোডাক্ট লিস্ট চালু করা (অ্যাডমিন থেকে যা দিবেন তাই আসবে)
 function loadProducts() {
     database.ref('products').on('value', (snapshot) => {
         const grid = document.getElementById('productGridArea');
@@ -100,6 +109,22 @@ function loadProducts() {
                     <button onclick="addToCart('${child.key}', '${p.name}', '${p.salePrice}', '${p.img || p.image}')" style="background:#eee; border:none; width:100%; padding:5px; border-radius:5px; margin-top:5px; cursor:pointer; font-size:11px;">Add to Cart</button>
                 </div>`;
         });
+    });
+}
+
+// সার্চ করার ফাংশন (নতুন যোগ করা)
+function filterProducts() {
+    let input = document.getElementById('productSearch').value.toLowerCase();
+    let productCards = document.querySelectorAll('.product-card');
+    
+    // যদি টাইপ করা হয়, তবে সরাসরি প্রোডাক্ট পেজে নিয়ে যাবে
+    if(input.length > 0) {
+        showSection('productPage', document.getElementById('navProd'));
+    }
+
+    productCards.forEach(card => {
+        let name = card.querySelector('h3').innerText.toLowerCase();
+        card.style.display = name.includes(input) ? "block" : "none";
     });
 }
 
@@ -149,7 +174,13 @@ window.onload = function() { loadProducts(); };
 <body>
 
 <div id="homePage" class="content-section active">
- <div class="header"><i class="fa fa-bars"></i><div class="brand">SMART BD</div><i class="fa fa-bell"></i></div> 
+ <div class="header"><i class="fa fa-bars"></i><div class="brand">SMART BD</div><i class="fa fa-bell"></i></div>
+ 
+ <div class="search-container">
+    <i class="fa fa-search"></i>
+    <input type="text" id="productSearch" placeholder="পণ্য খুঁজুন..." onkeyup="filterProducts()">
+ </div>
+
  <div class="section">
   <div class="banner"><img id="mainBanner" src=""></div>  
   <div class="social">
@@ -161,7 +192,7 @@ window.onload = function() { loadProducts(); };
   <div class="notice"><h3>নোটিশ বোর্ড</h3><p id="noticeText">লোডিং...</p></div>  
   <div class="grid">
    <div class="box" onclick="showSection('productPage', document.getElementById('navProd'))"><i class="fa fa-shopping-cart"></i><br>প্রোডাক্ট</div>
-   <div class="box"><i class="fa fa-search"></i><br>সার্চ</div>
+   <div class="box" onclick="document.getElementById('productSearch').focus()"><i class="fa fa-search"></i><br>সার্চ</div>
    <div class="box"><i class="fa fa-crown"></i><br>প্রো</div>
    <div class="box"><i class="fa fa-store"></i><br>ই-কমার্স</div>
    <div class="box" onclick="showSection('cartSection', document.getElementById('navCart'))"><i class="fa fa-leaf"></i><br>কার্ট</div>
@@ -186,8 +217,8 @@ window.onload = function() { loadProducts(); };
     <div class="header"><div class="brand">PROFILE</div></div>
     <div class="section" style="text-align:center; padding:20px;">
         <i class="fa fa-user-circle" style="font-size:60px; color:var(--primary);"></i>
-        <h3>স্বাগতম কাস্টমার!</h3>
-        <p>হেল্পলাইন: আপনার অ্যাডমিন প্যানেল থেকে দেখুন।</p>
+        <h3>স্মার্ট বিডিতে আপনাকে স্বাগতম!</h3>
+        <p>হেল্পলাইন: 01952719871।</p>
     </div>
 </div>
 
