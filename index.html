@@ -2,68 +2,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMART BD</title>
+<title>SMART BD - Reseller Platform</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
 <style>
-:root{--primary:#1565c0;--bg:#f4f6fb;--red:#d32f2f;--green:#2e7d32;}
-body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom: 80px;}
+:root{--primary:#1565c0;--bg:#f4f6fb;--red:#d32f2f;--green:#2e7d32;--orange:#f57c00;}
+body{margin:0;font-family:sans-serif;background:var(--bg);padding-bottom: 80px; overflow-x: hidden;}
 
-/* হেডার ডিজাইন */
-.header{
- background:linear-gradient(135deg,#1e88e5,#1565c0);
- padding:18px;color:#fff;
- display:flex;justify-content:space-between;align-items:center;
- border-bottom-left-radius:20px; border-bottom-right-radius:20px;
-}
+/* হেডার */
+.header{background:linear-gradient(135deg,#1e88e5,#1565c0);padding:18px;color:#fff;display:flex;justify-content:space-between;align-items:center;border-bottom-left-radius:20px; border-bottom-right-radius:20px;}
 .brand{font-size:20px;font-weight:bold;}
 
-/* সার্চ কন্টেইনার */
-.search-container {
-    background: #fff;
-    margin: 10px 15px;
-    padding: 10px 15px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.search-container i { color: #1565c0; margin-right: 10px; }
-.search-container input { border: none; outline: none; width: 100%; font-size: 14px; background: transparent; }
+/* সার্চ বার */
+.search-container {background:#fff; margin:10px 15px; padding:10px 15px; border-radius:12px; display:flex; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);}
+.search-container input {border:none; outline:none; width:100%; font-size:14px; background:transparent;}
 
-.banner img{width:100%;border-radius:15px;margin:10px 0; max-height:180px; object-fit:cover;}
-.section{padding:10px;}
-
-.social{display:flex;justify-content:space-around;background:#fff;padding:15px;border-radius:15px;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
-.social i{font-size:28px;color:var(--primary); cursor:pointer;}
-.notice{margin-top:10px;padding:18px;color:#fff;border-radius:15px;background:linear-gradient(135deg,#1e88e5,#5e35b1);}
-
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;}
-.box{background:#fff;border-radius:15px;padding:10px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.1);font-size:12px;cursor:pointer;}
-.box i{font-size:22px;color:var(--primary);margin-bottom:5px;}
+/* ব্যালেন্স কার্ড */
+.balance-card {background:linear-gradient(135deg,#64b5f6,#1565c0); padding:20px; border-radius:15px; color:#fff; margin:15px; box-shadow: 0 4px 15px rgba(21, 101, 192, 0.2);}
 
 /* প্রোডাক্ট গ্রিড */
-.product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.product-card { background: white; border-radius: 15px; padding: 10px; position: relative; border: 1px solid #eee; }
+.product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding:10px; }
+.product-card { background: white; border-radius: 15px; padding: 10px; border: 1px solid #eee; box-shadow:0 2px 5px rgba(0,0,0,0.05); text-align: center;}
 .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 12px; }
-.sale-price { color: var(--primary); font-weight: bold; font-size: 16px; }
-.reg-price { text-decoration: line-through; color: #888; font-size: 11px; }
+.p-title { font-size:13px; font-weight:bold; margin:8px 0; color:#333; height:35px; overflow:hidden; }
+.sale-price { color: var(--primary); font-weight: bold; font-size: 16px; display: block; margin-bottom: 8px;}
 
+/* বাটনসমূহ */
+.btn-share { background: #e3f2fd; color: var(--primary); border: none; padding: 8px; border-radius: 8px; width: 100%; font-weight: bold; margin-bottom: 5px; cursor: pointer; font-size:12px; }
+.btn-order { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
+
+/* মডাল (অর্ডার ফর্ম) */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:3000; align-items:center; justify-content:center; }
+.modal-content { background:#fff; width:85%; padding:20px; border-radius:20px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); }
+.form-input { width:100%; padding:12px; margin:8px 0; border:1px solid #ddd; border-radius:10px; box-sizing:border-box; outline: none;}
+
+/* অর্ডার কার্ড */
+.order-card { background:#fff; margin:10px 15px; padding:15px; border-radius:15px; border-left:5px solid var(--orange); box-shadow:0 2px 5px rgba(0,0,0,0.05); }
+.status-badge { padding:3px 8px; border-radius:5px; font-size:11px; color:#fff; background:var(--orange); }
+
+/* নেভিগেশন */
 .content-section { display: none; }
 .content-section.active { display: block; animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* বটম নেভিগেশন */
-.bottom{position:fixed;bottom:0;width:100%;background:#fff;display:flex;justify-content:space-around;padding:12px 0;box-shadow:0 -5px 10px rgba(0,0,0,0.1);border-top-left-radius:15px;border-top-right-radius:15px;z-index: 1000;}
-.nav{text-align:center;color:#777;font-size:12px;cursor:pointer;flex:1;}
+.bottom{position:fixed;bottom:0;width:100%;background:#fff;display:flex;justify-content:space-around;padding:12px 0;box-shadow:0 -5px 10px rgba(0,0,0,0.1);z-index: 1000;}
+.nav{text-align:center;color:#777;font-size:11px;flex:1; cursor:pointer;}
 .nav.active{color:var(--primary);font-weight:bold;}
 
-.btn-buy { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
+/* লগইন পেজ */
+#authPage { text-align: center; padding: 50px 20px; background: #fff; height: 100vh; position: fixed; top:0; left:0; width:100%; z-index: 4000; display: none; }
 </style>
 
 <script>
+// আপনার ফায়ারবেস কনফিগারেশন
 const firebaseConfig={
  apiKey:"AIzaSyDZ3rPr7ZmpvEVAs2bkGRgAuwSha9vm-Eg",
  authDomain:"stepupbd-211d1.firebaseapp.com",
@@ -72,28 +65,35 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-let cartItems = JSON.parse(localStorage.getItem('smartBdCart')) || [];
+let currentUser = JSON.parse(localStorage.getItem('smartBdUser')) || null;
+let selectedProduct = null;
 
-database.ref('settings').on('value', (snap) => {
-    if(snap.exists()){
-        const s = snap.val();
-        if(s.banner) document.getElementById('mainBanner').src = s.banner;
-        if(s.notice) document.getElementById('noticeText').innerText = s.notice;
-        document.getElementById('fbIcon').onclick = () => window.location.href = s.facebook || "#";
-        document.getElementById('ytIcon').onclick = () => window.location.href = s.youtube || "#";
-        document.getElementById('waIcon').onclick = () => window.location.href = "https://wa.me/" + s.whatsapp || "#";
-        document.getElementById('tgIcon').onclick = () => window.location.href = s.telegram || "#";
+// ১. চেক করা ইউজার লগইন কি না
+function checkAuth() {
+    if(!currentUser) {
+        document.getElementById('authPage').style.display = 'block';
+        document.getElementById('mainApp').style.display = 'none';
+    } else {
+        document.getElementById('authPage').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('uNameDisplay').innerText = currentUser.name;
+        loadProducts();
+        loadOrders();
     }
-});
-
-function showSection(sectionId, el) {
-    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
-    if(el) el.classList.add('active');
-    if(sectionId === 'cartSection') updateCartDisplay();
 }
 
+// ২. লগইন ফাংশন
+function loginUser() {
+    const name = document.getElementById('uName').value;
+    const phone = document.getElementById('uPhone').value;
+    if(name && phone) {
+        currentUser = { name, phone };
+        localStorage.setItem('smartBdUser', JSON.stringify(currentUser));
+        checkAuth();
+    } else { alert("দয়া করে সঠিক তথ্য দিন"); }
+}
+
+// ৩. প্রোডাক্ট লোড করা
 function loadProducts() {
     database.ref('products').on('value', (snapshot) => {
         const grid = document.getElementById('productGridArea');
@@ -102,136 +102,158 @@ function loadProducts() {
             const p = child.val();
             grid.innerHTML += `
                 <div class="product-card">
-                    <img src="${p.img || p.image}" onerror="this.src='https://via.placeholder.com/150'">
-                    <h3 class="p-name" style="font-size:12px; margin:5px 0;">${p.name}</h3>
-                    <div><span class="reg-price">৳${p.regPrice || ''}</span> <span class="sale-price">৳${p.salePrice}</span></div>
-                    <button class="btn-buy" onclick="orderNow('${p.name}', '${p.salePrice}', '${p.img || p.image}')">Order Now</button>
-                    <button onclick="addToCart('${child.key}', '${p.name}', '${p.salePrice}', '${p.img || p.image}')" style="background:#eee; border:none; width:100%; padding:5px; border-radius:5px; margin-top:5px; cursor:pointer; font-size:11px;">Add to Cart</button>
+                    <img src="${p.img || p.image || 'https://via.placeholder.com/150'}">
+                    <div class="p-title">${p.name}</div>
+                    <span class="sale-price">৳${p.salePrice}</span>
+                    <button class="btn-share" onclick="copyProduct('${p.name}', '${p.salePrice}')"><i class="fa fa-copy"></i> কপি ডিটেইলস</button>
+                    <button class="btn-order" onclick="openOrderModal('${p.name}', '${p.salePrice}')">অর্ডার করুন</button>
                 </div>`;
         });
     });
 }
 
-// আপনার বিশেষ সার্চ ফাংশন
-function filterProducts() {
-    let input = document.getElementById('productSearch').value.toLowerCase();
-    let productCards = document.querySelectorAll('.product-card');
-    let homeMainContent = document.getElementById('mainHomeContent');
-    
-    // টাইপ করা শুরু করলে ব্যানার/মেনু লুকিয়ে শুধু প্রোডাক্ট পেজ দেখাবে
-    if(input.length > 0) {
-        homeMainContent.style.display = "none";
-        showSection('productPage', document.getElementById('navProd'));
-    } else {
-        homeMainContent.style.display = "block";
-        showSection('homePage', document.querySelector('.nav.active'));
-    }
-
-    productCards.forEach(card => {
-        let name = card.querySelector('.p-name').innerText.toLowerCase();
-        card.style.display = name.includes(input) ? "block" : "none";
+// ৪. ডিটেইলস কপি (Confidence Style)
+function copyProduct(name, price) {
+    const text = `পণ্য: ${name}\nমূল্য: ৳${price}\nঅর্ডার করতে ইনবক্স করুন।`;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("পণ্যের বিবরণ কপি হয়েছে! এখন ফেসবুকে শেয়ার করুন।");
     });
 }
 
-function addToCart(id, name, price, img) {
-    cartItems.push({ id, name, price, img });
-    localStorage.setItem('smartBdCart', JSON.stringify(cartItems));
-    alert(name + " কার্টে যোগ হয়েছে!");
+// ৫. অর্ডার করার পপআপ
+function openOrderModal(name, price) {
+    selectedProduct = { name, price };
+    document.getElementById('orderModal').style.display = 'flex';
+    document.getElementById('modalTitle').innerText = name;
 }
 
-function orderNow(name, price, img) {
-    const n = prompt("আপনার নাম:");
-    const p = prompt("মোবাইল নম্বর:");
-    const a = prompt("ঠিকানা:");
-    if(n && p && a) {
-        database.ref('orders').push({ product: name, price: price, productImg: img, customer: n, phone: p, address: a, status: 'Pending', time: Date.now() });
-        alert("অর্ডার সফল হয়েছে! ✅");
-    }
-}
+// ৬. অর্ডার কনফার্ম (লাভসহ ডাটাবেসে সেভ)
+function confirmOrder() {
+    const custName = document.getElementById('custName').value;
+    const custPhone = document.getElementById('custPhone').value;
+    const custAddr = document.getElementById('custAddr').value;
+    const myProfit = document.getElementById('myProfit').value || 0;
 
-function updateCartDisplay() {
-    const list = document.getElementById('cartItemsList');
-    if (cartItems.length === 0) { list.innerHTML = '<p style="text-align:center; padding:20px;">কার্ট খালি।</p>'; }
-    else {
-        let html = ''; let total = 0;
-        cartItems.forEach((item, index) => {
-            total += parseInt(item.price);
-            html += `<div style="display:flex; gap:10px; background:#fff; padding:10px; margin-bottom:5px; border-radius:10px;">
-                <img src="${item.img}" style="width:40px; height:40px; border-radius:5px;">
-                <div style="flex:1"><b>${item.name}</b><br>৳${item.price}</div>
-                <i class="fa fa-trash" style="color:red" onclick="removeFromCart(${index})"></i>
-            </div>`;
+    if(custName && custPhone && custAddr) {
+        const totalBill = parseInt(selectedProduct.price) + parseInt(myProfit);
+        database.ref('orders').push({
+            productName: selectedProduct.name,
+            totalBill: totalBill,
+            profit: myProfit,
+            customerName: custName,
+            customerPhone: custPhone,
+            customerAddress: custAddr,
+            resellerPhone: currentUser.phone,
+            resellerName: currentUser.name,
+            status: 'Pending',
+            time: Date.now()
         });
-        html += `<b>মোট: ৳${total}</b> <button class="btn-buy" onclick="checkoutCart()">Order All</button>`;
-        list.innerHTML = html;
-    }
+        alert("অর্ডার সফল! মোট বিল: ৳" + totalBill);
+        document.getElementById('orderModal').style.display = 'none';
+        showSection('orderListPage', document.getElementById('navOrder'));
+    } else { alert("সব তথ্য পূরণ করুন"); }
 }
 
-function removeFromCart(index) {
-    cartItems.splice(index, 1);
-    localStorage.setItem('smartBdCart', JSON.stringify(cartItems));
-    updateCartDisplay();
+// ৭. অর্ডার লিস্ট লোড
+function loadOrders() {
+    database.ref('orders').orderByChild('resellerPhone').equalTo(currentUser.phone).on('value', (snap) => {
+        const list = document.getElementById('myOrdersList');
+        list.innerHTML = "";
+        if(!snap.exists()) { list.innerHTML = "<p style='text-align:center; padding:20px;'>কোনো অর্ডার নেই</p>"; return; }
+        snap.forEach(child => {
+            const o = child.val();
+            list.innerHTML += `
+                <div class="order-card">
+                    <div style="display:flex; justify-content:space-between">
+                        <b>${o.productName}</b>
+                        <span class="status-badge">${o.status}</span>
+                    </div>
+                    <p style="font-size:12px; margin:5px 0; color:#555">কাস্টমার: ${o.customerName}</p>
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--green)">
+                        <span>বিল: ৳${o.totalBill}</span>
+                        <span>লাভ: ৳${o.profit}</span>
+                    </div>
+                </div>`;
+        });
+    });
 }
 
-window.onload = function() { loadProducts(); };
+// ৮. সেকশন পরিবর্তন
+function showSection(id, el) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
+    if(el) el.classList.add('active');
+}
+
+window.onload = checkAuth;
 </script>
 </head>
 <body>
 
-<div id="homePage" class="content-section active">
- <div class="header"><i class="fa fa-bars"></i><div class="brand">SMART BD</div><i class="fa fa-bell"></i></div> 
- 
- <div class="search-container">
-    <i class="fa fa-search"></i>
-    <input type="text" id="productSearch" placeholder="পণ্য খুঁজুন..." onkeyup="filterProducts()">
- </div>
-
- <div class="section" id="mainHomeContent">
-  <div class="banner"><img id="mainBanner" src=""></div>  
-  <div class="social">
-    <i class="fab fa-facebook" id="fbIcon"></i>
-    <i class="fab fa-youtube" id="ytIcon"></i>
-    <i class="fab fa-whatsapp" id="waIcon"></i>
-    <i class="fab fa-telegram" id="tgIcon"></i>
-  </div>  
-  <div class="notice"><h3>নোটিশ বোর্ড</h3><p id="noticeText">লোডিং...</p></div>  
-  <div class="grid">
-   <div class="box" onclick="showSection('productPage', document.getElementById('navProd'))"><i class="fa fa-shopping-cart"></i><br>প্রোডাক্ট</div>
-   <div class="box" onclick="document.getElementById('productSearch').focus()"><i class="fa fa-search"></i><br>সার্চ</div>
-   <div class="box"><i class="fa fa-crown"></i><br>প্রো</div>
-   <div class="box"><i class="fa fa-store"></i><br>ই-কমার্স</div>
-   <div class="box" onclick="showSection('cartSection', document.getElementById('navCart'))"><i class="fa fa-leaf"></i><br>কার্ট</div>
-   <div class="box" onclick="window.location.href='tel:01XXXXXXXX'"><i class="fa fa-headset"></i><br>সাপোর্ট</div>
-   <div class="box"><i class="fa fa-mobile"></i><br>রিচার্জ</div>
-   <div class="box" onclick="showSection('profilePage', document.getElementById('navUser'))"><i class="fa fa-user"></i><br>প্রোফাইল</div>
-  </div>
- </div> 
-</div>
-
-<div id="productPage" class="content-section">
-    <div class="header"><div class="brand">PRODUCTS</div></div>
-    <div class="section"><div id="productGridArea" class="product-grid"></div></div>
-</div>
-
-<div id="cartSection" class="content-section">
-    <div class="header"><div class="brand">MY CART</div></div>
-    <div class="section" id="cartItemsList"></div>
-</div>
-
-<div id="profilePage" class="content-section">
-    <div class="header"><div class="brand">PROFILE</div></div>
-    <div class="section" style="text-align:center; padding:20px;">
-        <i class="fa fa-user-circle" style="font-size:60px; color:var(--primary);"></i>
-        <h3>স্বাগতম কাস্টমার!</h3>
-        <p>হেল্পলাইন: আপনার অ্যাডমিন প্যানেল থেকে দেখুন।</p>
+<div id="authPage">
+    <i class="fa fa-shopping-bag" style="font-size:70px; color:var(--primary); margin-top:80px;"></i>
+    <h2 style="color:var(--primary)">SMART BD RESELLER</h2>
+    <p style="color:#666">আপনার ব্যবসার নতুন যাত্রা শুরু হোক</p>
+    <div style="padding:20px">
+        <input type="text" id="uName" class="form-input" placeholder="আপনার নাম">
+        <input type="number" id="uPhone" class="form-input" placeholder="আপনার মোবাইল নম্বর">
+        <button class="btn-order" style="margin-top:15px; font-size:16px;" onclick="loginUser()">অ্যাপে প্রবেশ করুন</button>
     </div>
 </div>
 
-<div class="bottom">
-  <div class="nav active" onclick="showSection('homePage', this)"><i class="fa fa-home"></i><br>হোম</div>
-  <div id="navProd" class="nav" onclick="showSection('productPage', this)"><i class="fa fa-box"></i><br>প্রোডাক্ট</div>
-  <div id="navCart" class="nav" onclick="showSection('cartSection', this)"><i class="fa fa-shopping-cart"></i><br>কার্ট</div>
-  <div id="navUser" class="nav" onclick="showSection('profilePage', this)"><i class="fa fa-user"></i><br>প্রোফাইল</div>
+<div id="mainApp" style="display:none;">
+    <div id="homePage" class="content-section active">
+        <div class="header"><div class="brand">SMART BD</div><i class="fa fa-bell"></i></div>
+        <div class="search-container"><i class="fa fa-search" style="color:#777; margin-right:10px;"></i><input type="text" placeholder="পণ্য খুঁজুন..."></div>
+        
+        <div class="balance-card">
+            <h4 style="margin:0; opacity:0.9;">আপনার মোট লাভ</h4>
+            <h2 style="margin:8px 0; font-size:32px;">৳ ০.০০</h2>
+            <p style="margin:0; font-size:12px;">অর্ডার ডেলিভারি হলে এখানে জমা হবে</p>
+        </div>
+
+        <div class="section">
+            <h3 style="margin:10px 15px;">প্রোডাক্ট লিস্ট</h3>
+            <div id="productGridArea" class="product-grid"></div>
+        </div>
+    </div>
+
+    <div id="orderListPage" class="content-section">
+        <div class="header"><div class="brand">আমার অর্ডারসমূহ</div></div>
+        <div class="section" id="myOrdersList"></div>
+    </div>
+
+    <div id="profilePage" class="content-section">
+        <div class="header"><div class="brand">আমার প্রোফাইল</div></div>
+        <div class="section" style="text-align:center; padding:40px 20px;">
+            <i class="fa fa-user-circle" style="font-size:90px; color:var(--primary);"></i>
+            <h2 id="uNameDisplay" style="margin:15px 0;">ইউজার</h2>
+            <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:20px;">
+                <p>সবকিছু ঠিক আছে! আপনি এখন একজন অনুমোদিত রিসেলার।</p>
+            </div>
+            <button onclick="localStorage.clear(); location.reload();" style="color:var(--red); border:none; background:none; font-weight:bold; cursor:pointer;"><i class="fa fa-sign-out-alt"></i> লগ আউট করুন</button>
+        </div>
+    </div>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="margin-top:0; color:var(--primary);">প্রোডাক্ট নাম</h3>
+            <input type="text" id="custName" class="form-input" placeholder="কাস্টমারের নাম">
+            <input type="number" id="custPhone" class="form-input" placeholder="কাস্টমারের মোবাইল নম্বর">
+            <input type="text" id="custAddr" class="form-input" placeholder="পূর্ণ ঠিকানা">
+            <input type="number" id="myProfit" class="form-input" placeholder="আপনার লাভ যোগ করুন (যেমন: ১০০)">
+            <p style="font-size:11px; color:var(--orange); font-weight:bold;">* আসল দামের সাথে এই লাভ যোগ হয়ে কাস্টমারের কাছে বিল যাবে।</p>
+            <button class="btn-order" onclick="confirmOrder()">অর্ডার কনফার্ম করুন</button>
+            <button onclick="document.getElementById('orderModal').style.display='none'" style="width:100%; border:none; background:none; margin-top:15px; color:#777; cursor:pointer;">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div class="nav active" onclick="showSection('homePage', this)"><i class="fa fa-home"></i><br>হোম</div>
+        <div id="navOrder" class="nav" onclick="showSection('orderListPage', this)"><i class="fa fa-shopping-bag"></i><br>অর্ডার</div>
+        <div id="navUser" class="nav" onclick="showSection('profilePage', this)"><i class="fa fa-user"></i><br>প্রোফাইল</div>
+    </div>
 </div>
 
 </body>
