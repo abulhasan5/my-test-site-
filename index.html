@@ -2,39 +2,156 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrom King Pro</title>
     <style>
-        :root { --primary: #f39c12; --secondary: #e67e22; --bg: #fff5e6; }
-        body { background: url('https://images.unsplash.com/photo-1678121651877-3e1ee5cf3223?auto=format&fit=crop&q=80&w=600') no-repeat center center fixed; background-size: cover; margin: 0; font-family: 'Arial', sans-serif; }
+        :root { --primary: #f39c12; --secondary: #e67e22; }
         
-        .top-bar { width: 95%; display: flex; justify-content: space-between; padding: 20px; color: #d35400; font-weight: bold; }
-        .user-stat { background: rgba(255, 255, 255, 0.6); padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        body { 
+            background: url('https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?auto=format&fit=crop&q=80&w=1000') no-repeat center center fixed; 
+            background-size: cover; 
+            margin: 0; 
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* উপরের কয়েন ও উইন বার */
+        .top-bar { 
+            width: 90%; 
+            max-width: 360px;
+            display: flex; 
+            justify-content: space-between; 
+            padding: 15px 0; 
+            color: #ffffff; 
+            font-weight: bold; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9); 
+        }
         
-        .main-menu { margin-top: 50px; display: flex; flex-direction: column; gap: 20px; width: 80%; max-width: 300px; }
-        .btn { padding: 20px; border: none; border-radius: 15px; font-size: 18px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .user-stat { 
+            background: rgba(0, 0, 0, 0.7); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px;
+        }
+
+        /* মেইন মেনু কন্টেইনার - যা সবকিছু মাঝখানে রাখবে */
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+            padding-bottom: 50px;
+        }
+
+        .main-menu { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            width: 85%; 
+            max-width: 280px; 
+            margin-top: 20px;
+        }
+
+        .btn { 
+            padding: 16px; 
+            border: none; 
+            border-radius: 15px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); 
+            font-weight: bold; 
+        }
+        
         .btn:active { transform: scale(0.95); }
-        
-        #profile-screen { display: none; background: white; width: 90%; padding: 20px; border-radius: 20px; text-align: center; }
+
+        #profile-screen { 
+            display: none; 
+            background: rgba(255, 255, 255, 0.95); 
+            width: 85%; 
+            max-width: 280px; 
+            padding: 25px 20px; 
+            border-radius: 20px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        #profile-screen h2 { margin-top: 0; color: #2c3e50; }
+        #profile-screen p { font-size: 16px; color: #34495e; margin: 8px 0; }
+        .back-btn { background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <div class="user-stat">💰 1500 Coins</div>
+        <div class="user-stat">💰 1,500 Coins</div>
         <div class="user-stat">🏆 12 Wins</div>
     </div>
 
-    <div class="main-menu" id="home-screen">
-        <button class="btn" style="background:#3498db; color:white" onclick="showProfile()">👤 প্রোফাইল</button>
-        <button class="btn" style="background:#2ecc71; color:white" onclick="openRoomPopup()">🤝 বন্ধুদের সাথে খেলা</button>
-        <button class="btn" style="background:#9b59b6; color:white" onclick="alert('অনলাইন ম্যাচমেকিং')">🌐 অনলাইনে খেলা</button>
+    <div class="menu-container">
+        
+        <div style="text-align: center; margin-bottom: 25px; padding: 0 10px;">
+            <h1 style="color: #f39c12; font-size: 26px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); margin: 0;">
+                🏆 Welcome to Carrom Board 🏆
+            </h1>
+            <p style="color: #ffffff; font-size: 14px; margin: 6px 0 0 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); font-weight: bold;">বন্ধুদের সাথে খেলুন আর কয়েন জিতুন!</p>
+        </div>
+
+        <div class="main-menu" id="home-screen">
+            <button class="btn" style="background: #3498db; color:white" onclick="showProfile()">👤 প্রোফাইল</button>
+            <button class="btn" style="background: #2ecc71; color:white" onclick="openRoomPopup()">🤝 বন্ধুদের সাথে খেলা</button>
+            <button class="btn" style="background: #9b59b6; color:white" onclick="alert('অনлайн ম্যাচিং শুরু হচ্ছে...')">🌐 অনলাইন খেলা</button>
+        </div>
+
+        <div id="profile-screen">
+            <h2>👤 Shamim</h2>
+            <p>🏆 মোট জয়: ১২টি</p>
+            <p>💰 কয়েন: ১,৫০০</p>
+            <button class="back-btn" onclick="hideProfile()">ফিরে যাও</button>
+        </div>
+
     </div>
 
-    <div id="profile-screen">
-        <h2>👤 Shamim</h2>
-        <p>মোট জয়: ১২টি</p>
-        <p>কয়েন: ১,৫০০</p>
-        <button onclick="hideProfile()">ফিরে যাও</button>
+    <div id="roomPopup" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 999;">
+        <div style="background: linear-gradient(145deg, #ffffff, #f1f2f6); width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 25px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 3px solid #2ecc71;">
+            
+            <div style="font-size: 40px; margin-bottom: 10px;">🤝</div>
+            <h3 style="color: #2c3e50; margin: 0 0 15px 0; font-size: 22px; font-weight: bold;">বন্ধুদের সাথে খেলা</h3>
+            
+            <div id="popupMainMenu" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
+                <button style="padding: 14px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; background: #3498db; color: white; box-shadow: 0 4px 10px rgba(52,152,219,0.3);" 
+                        onclick="let randomCode = Math.floor(1000 + Math.random() * 9000); document.getElementById('popupMainMenu').style.display='none'; document.getElementById('createRoomSection').style.display='block'; document.getElementById('generatedCode').innerText = randomCode;">
+                    ➕ নতুন রুম তৈরি করুন
+                </button>
+                <button style="padding: 14px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; background: #2ecc71; color: white; box-shadow: 0 4px 10px rgba(46,204,113,0.3);" 
+                        onclick="document.getElementById('popupMainMenu').style.display='none'; document.getElementById('joinRoomSection').style.display='block';">
+                    🔑 কোড দিয়ে জয়েন করুন
+                </button>
+            </div>
+
+            <div id="createRoomSection" style="display: none; margin-bottom: 20px;">
+                <p style="font-size: 14px; color: #57606f; margin-bottom: 10px;">আপনার রুম কোডটি বন্ধুকে পাঠান:</p>
+                <div id="generatedCode" style="font-size: 32px; font-weight: bold; color: #3498db; letter-spacing: 5px; background: #e8f4fd; padding: 10px; border-radius: 12px; border: 2px dashed #3498db; margin-bottom: 15px;">0000</div>
+                <p style="font-size: 12px; color: #e67e22; font-weight: bold;">🔄 বন্ধু জয়েন করার জন্য অপেক্ষা করা হচ্ছে...</p>
+            </div>
+
+            <div id="joinRoomSection" style="display: none; margin-bottom: 20px;">
+                <p style="font-size: 13px; color: #57606f; margin-bottom: 15px;">বন্ধুর দেওয়া ৪ সংখ্যার কোডটি লিখুন:</p>
+                <input type="number" id="roomCodeInput" placeholder="0 0 0 0" max="9999" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4);" style="width: 80%; padding: 12px; font-size: 24px; border: 2px solid #ced6e0; border-radius: 15px; text-align: center; font-weight: bold; color: #2ecc71; outline: none; letter-spacing: 5px;">
+                <button style="width: 85%; margin-top: 15px; padding: 12px; border: none; border-radius: 12px; font-weight: bold; background: #2ecc71; color: white;" 
+                        onclick="let c = document.getElementById('roomCodeInput').value; if(c.length === 4) { alert('✅ কোড ' + c + ' দিয়ে সফলভাবে রুমে ঢোকা হচ্ছে!'); resetPopup(); } else { alert('❌ দয়া করে ৪ সংখ্যার সঠিক কোড দিন!'); }">
+                    রুমের ভেতর ঢুকুন
+                </button>
+            </div>
+            
+            <button style="width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; background: #a4b0be; color: white; margin-top: 5px;" onclick="resetPopup();">বন্ধ করুন</button>
+        </div>
     </div>
 
     <script>
@@ -46,71 +163,17 @@
             document.getElementById('home-screen').style.display = 'flex';
             document.getElementById('profile-screen').style.display = 'none';
         }
-    </script>
-    
-    <script>
-        // এই ফাংশনটি বাটন চাপলে পপ-আপ বক্সটি ওপেন করবে
         function openRoomPopup() {
             document.getElementById('roomPopup').style.display = 'flex';
         }
         function resetPopup() {
-        document.getElementById('roomPopup').style.display = 'none';
-        document.getElementById('popupMainMenu').style.display = 'flex';
-        document.getElementById('createRoomSection').style.display = 'none';
-        document.getElementById('joinRoomSection').style.display = 'none';
-        document.getElementById('roomCodeInput').value = '';
+            document.getElementById('roomPopup').style.display = 'none';
+            document.getElementById('popupMainMenu').style.display = 'flex';
+            document.getElementById('createRoomSection').style.display = 'none';
+            document.getElementById('joinRoomSection').style.display = 'none';
+            document.getElementById('roomCodeInput').value = '';
         }
     </script>
-    <div style="text-align: center; margin-top: 25px; margin-bottom: 10px;">
-        <h1 style="color: #f39c12; font-size: 26px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2); font-family: 'Arial', sans-serif; margin: 0;">
-            🏆 Welcome to Carrom Board 🏆
-        </h1>
-        <p style="color: #7f8c8d; font-size: 14px; margin: 5px 0 0 0;">বন্ধুদের সাথে খেলুন আর কয়েন জিতুন!</p>
-    </div>
-    <!-- 🚪 Friends Match Popup Box -->
-    <div id="roomPopup" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 999;">
-        <div style="background: linear-gradient(145deg, #ffffff, #f1f2f6); width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 25px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 3px solid #2ecc71;">
-            
-            <div style="font-size: 40px; margin-bottom: 10px;">🤝</div>
-            <h3 style="color: #2c3e50; margin: 0 0 15px 0; font-size: 22px; font-weight: bold;">বন্ধুদের সাথে খেলা</h3>
-            
-            <!-- Popup Main Menu -->
-            <div id="popupMainMenu" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
-                <button style="padding: 14px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; background: #3498db; color: white; box-shadow: 0 4px 10px rgba(52,152,219,0.3);" 
-                        onclick="let randomCode = Math.floor(1000 + Math.random() * 9000); document.getElementById('popupMainMenu').style.display='none'; document.getElementById('createRoomSection').style.display='block'; document.getElementById('generatedCode').innerText = randomCode;">
-                    ➕ নতুন রুম তৈরি করুন
-                </button>
-                
-                <button style="padding: 14px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; background: #2ecc71; color: white; box-shadow: 0 4px 10px rgba(46,204,113,0.3);" 
-                        onclick="document.getElementById('popupMainMenu').style.display='none'; document.getElementById('joinRoomSection').style.display='block';">
-                    🔑 কোড দিয়ে জয়েন করুন
-                </button>
-            </div>
 
-            <!-- Action 1: Create Room Screen -->
-            <div id="createRoomSection" style="display: none; margin-bottom: 20px;">
-                <p style="font-size: 14px; color: #57606f; margin-bottom: 10px;">আপনার রুম কোডটি বন্ধুকে পাঠান:</p>
-                <div id="generatedCode" style="font-size: 32px; font-weight: bold; color: #3498db; letter-spacing: 5px; background: #e8f4fd; padding: 10px; border-radius: 12px; border: 2px dashed #3498db; margin-bottom: 15px;">0000</div>
-                <p style="font-size: 12px; color: #e67e22; font-weight: bold;">🔄 বন্ধু জয়েন করার জন্য অপেক্ষা করা হচ্ছে...</p>
-            </div>
-
-            <!-- Action 2: Join Room Screen -->
-            <div id="joinRoomSection" style="display: none; margin-bottom: 20px;">
-                <p style="font-size: 13px; color: #57606f; margin-bottom: 15px;">বন্ধুর দেওয়া ৪ সংখ্যার কোডটি লিখুন:</p>
-                <input type="number" id="roomCodeInput" placeholder="0 0 0 0" max="9999" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4);" style="width: 80%; padding: 12px; font-size: 24px; border: 2px solid #ced6e0; border-radius: 15px; text-align: center; font-weight: bold; color: #2ecc71; outline: none; letter-spacing: 5px;">
-                
-                <button style="width: 85%; margin-top: 15px; padding: 12px; border: none; border-radius: 12px; font-weight: bold; background: #2ecc71; color: white;" 
-                        onclick="let c = document.getElementById('roomCodeInput').value; if(c.length === 4) { alert('✅ কোড ' + c + ' দিয়ে সফলভাবে রুমে ঢোকা হচ্ছে!'); resetPopup(); } else { alert('❌ দয়া করে ৪ সংখ্যার সঠিক কোড দিন!'); }">
-                    রুমের ভেতর ঢুকুন
-                </button>
-            </div>
-            
-            <!-- Close Button -->
-            <button style="width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; background: #a4b0be; color: white; margin-top: 5px;" 
-                    onclick="resetPopup();">
-                বন্ধ করুন
-            </button>
-        </div>
-    </div>
 </body>
 </html>
